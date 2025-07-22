@@ -1,0 +1,11 @@
+[package]
+name = "kslink-config"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+figment.workspace = true
+educe.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true

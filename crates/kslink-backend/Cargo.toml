@@ -1,0 +1,16 @@
+[package]
+name = "kslink-backend"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+actix-web.workspace = true
+educe.workspace = true
+log.workspace = true
+mimalloc.workspace = true
+radix_fmt.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+simple_logger.workspace = true
+
+kslink-config.workspace = true
