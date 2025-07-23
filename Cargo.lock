@@ -866,8 +866,10 @@ dependencies = [
 name = "entity"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "sea-orm",
  "serde",
+ "thiserror",
 ]
 
 [[package]]

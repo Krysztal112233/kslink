@@ -12,16 +12,28 @@ impl MigrationTrait for Migration {
                     .table(UrlMappingTable::UrlMapping)
                     .if_not_exists()
                     .col(string_uniq(UrlMappingTable::Hash).primary_key())
-                    .col(string(UrlMappingTable::Dest))
+                    .col(string_uniq(UrlMappingTable::Dest))
                     .to_owned(),
             )
-            .await
+            .await?;
+        manager
+            .create_index(
+                Index::create()
+                    .table(UrlMappingTable::UrlMapping)
+                    .col(UrlMappingTable::Dest)
+                    .to_owned(),
+            )
+            .await?;
+
+        Ok(())
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
             .drop_table(Table::drop().table(UrlMappingTable::UrlMapping).to_owned())
-            .await
+            .await?;
+
+        Ok(())
     }
 }
 
