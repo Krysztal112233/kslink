@@ -41,9 +41,9 @@ impl KSLinkConfig {
     pub fn new() -> Self {
         let figment = Figment::new()
             .merge(Serialized::defaults(KSLinkConfig::default()))
-            .merge(Env::prefixed("KSLINK_"))
             .merge(Toml::file("/etc/kslink.toml"))
             .merge(Toml::file("./kslink.toml"))
+            .merge(Env::prefixed("KSLINK_"))
             .select(Profile::from_env_or("KSLINK_PROFILE", "dev"));
 
         figment.extract().unwrap()
