@@ -4,4 +4,4 @@ host = "0.0.0.0"
 port = 9000
 
 [database]
-url = "postgres://root:root@localhost/postgres"
+url = "postgres://postgres:postgres@localhost/postgres"

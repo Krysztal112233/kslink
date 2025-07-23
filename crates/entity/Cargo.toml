@@ -1,0 +1,8 @@
+[package]
+name = "entity"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+sea-orm.workspace = true

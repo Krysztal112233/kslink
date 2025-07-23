@@ -1,5 +1,10 @@
 [workspace]
-members = ["crates/kslink-backend", "crates/kslink-config"]
+members = [
+    "crates/entity",
+    "crates/kslink-backend",
+    "crates/kslink-config",
+    "crates/migration",
+]
 resolver = "3"
 
 [workspace.package]
@@ -11,16 +16,20 @@ actix-web = "4"
 educe = "0.6"
 log = "0.4"
 mimalloc = "0.1.47"
-radix_fmt = "1"
+radix_fmt_ng = "1"
 sea-orm = "1.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 simple_logger = "5.0"
 syn = { version = "2.0", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
 toml = "0.9"
 url = { version = "2.5", features = ["serde"] }
 
+entity = { path = "crates/entity" }
 kslink-config = { path = "crates/kslink-config" }
+kslink-backend = { path = "crates/kslink-backend" }
+migration = { path = "crates/migration" }
 
 [workspace.dependencies.figment]
 features = ["toml", "env"]

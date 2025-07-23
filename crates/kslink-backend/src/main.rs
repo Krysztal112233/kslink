@@ -1,5 +1,3 @@
-#![feature(min_specialization)]
-
 use std::io;
 
 use actix_web::{middleware::ErrorHandlers, web, App, HttpServer};
@@ -29,6 +27,7 @@ async fn main() -> io::Result<()> {
                     .service(endpoints::link::post_with_json)
                     .service(endpoints::link::post_with_query)
                     .service(endpoints::link::get_link)
+                    .service(endpoints::link::get_link_status)
                     .service(endpoints::link::delete_link),
             )
             .service(web::scope("/statistics"))

@@ -8,9 +8,10 @@ actix-web.workspace = true
 educe.workspace = true
 log.workspace = true
 mimalloc.workspace = true
-radix_fmt.workspace = true
+radix_fmt_ng.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 simple_logger.workspace = true
+url.workspace = true
 
 kslink-config.workspace = true
