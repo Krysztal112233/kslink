@@ -35,6 +35,15 @@ pub struct ActixConfig {
 pub struct DatabaseConfig {
     #[educe(Default = "postgres://root:root@localhost/postgres")]
     pub url: String,
+
+    #[educe(Default = 16)]
+    pub connect_timeout: u64,
+
+    #[educe(Default = 64)]
+    pub max_connections: u32,
+
+    #[educe(Default = 8)]
+    pub min_connections: u32,
 }
 
 impl KSLinkConfig {

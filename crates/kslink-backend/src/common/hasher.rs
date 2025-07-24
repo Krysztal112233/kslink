@@ -1,6 +1,7 @@
 use std::hash::{DefaultHasher, Hash, Hasher};
 
 use radix_fmt_ng::radix;
+use url::Url;
 
 pub trait ShortHash {
     fn into_hash(self) -> u64;
@@ -24,5 +25,11 @@ impl ShortHash for &str {
         let mut hasher = DefaultHasher::default();
         self.hash(&mut hasher);
         hasher.finish()
+    }
+}
+
+impl ShortHash for Url {
+    fn into_hash(self) -> u64 {
+        self.to_string().into_hash()
     }
 }

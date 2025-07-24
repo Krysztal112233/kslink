@@ -12,17 +12,17 @@ version = "0.1.0"
 edition = "2024"
 
 [workspace.dependencies]
+anyhow = "1"
 actix-web = "4"
 async-trait = "*"
 educe = "0.6"
 log = "0.4"
 mimalloc = "0.1.47"
 radix_fmt_ng = "1"
-sea-orm = "1.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 simple_logger = "5.0"
-syn = { version = "2.0", features = ["full"] }
+syn = "2.0"
 thiserror = "2"
 tokio = { version = "1", features = ["full"] }
 toml = "0.9"
@@ -36,3 +36,11 @@ migration = { path = "crates/migration" }
 [workspace.dependencies.figment]
 features = ["toml", "env"]
 git = "https://github.com/Krysztal112233/Figment.git"
+
+[workspace.dependencies.sea-orm-migration]
+version = "1.1"
+features = ["runtime-tokio-rustls", "sqlx-postgres"]
+
+[workspace.dependencies.sea-orm]
+version = "1.1"
+features = ["runtime-tokio-rustls", "sqlx-postgres", "with-time", "with-json"]

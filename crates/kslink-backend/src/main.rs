@@ -1,27 +1,31 @@
-use std::io;
+use std::time::Duration;
 
 use actix_web::{middleware::ErrorHandlers, web, App, HttpServer};
-use kslink_config::KSLinkConfig;
+use kslink_config::{DatabaseConfig, KSLinkConfig};
 use mimalloc::MiMalloc;
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 
-use crate::middleware::handler;
+use crate::{error::Error, middleware::handler};
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
 
 mod common;
 mod endpoints;
+mod error;
 mod middleware;
 
 #[actix_web::main]
-async fn main() -> io::Result<()> {
+async fn main() -> anyhow::Result<()> {
     simple_logger::init().unwrap();
 
     let config = KSLinkConfig::new();
+    let database = setup_database(&config.database).await?;
 
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
             .wrap(ErrorHandlers::default().default_handler(handler::default_error_handler))
+            .app_data(web::Data::new(database.clone()))
             .service(
                 web::scope("/link")
                     .service(endpoints::link::post_with_json)
@@ -36,5 +40,16 @@ async fn main() -> io::Result<()> {
     .bind((config.actix.host, config.actix.port))?
     .workers(config.actix.workers)
     .run()
-    .await
+    .await?;
+
+    Ok(())
+}
+
+async fn setup_database(config: &DatabaseConfig) -> Result<DatabaseConnection, Error> {
+    let mut opt = ConnectOptions::new(config.url.to_owned());
+    opt.min_connections(config.min_connections)
+        .max_connections(config.max_connections)
+        .connect_timeout(Duration::from_secs(config.connect_timeout));
+
+    Ok(Database::connect(opt).await?)
 }

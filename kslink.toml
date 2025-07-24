@@ -5,3 +5,6 @@ port = 9000
 
 [database]
 url = "postgres://postgres:postgres@localhost/postgres"
+min_connections = 8
+max_connections = 64
+connect_timeout = 16

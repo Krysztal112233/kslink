@@ -5,13 +5,17 @@ edition.workspace = true
 
 [dependencies]
 actix-web.workspace = true
+anyhow.workspace = true
 educe.workspace = true
 log.workspace = true
 mimalloc.workspace = true
 radix_fmt_ng.workspace = true
+sea-orm.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 simple_logger.workspace = true
+thiserror.workspace = true
 url.workspace = true
 
 kslink-config.workspace = true
+entity.workspace = true
