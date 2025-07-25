@@ -11,7 +11,7 @@ async fn main() {
 }
 
 fn setup() {
-    let config = KSLinkConfig::new();
+    let config: KSLinkConfig = KSLinkConfig::get_figment().extract().unwrap();
 
     unsafe {
         env::set_var("DATABASE_URL", config.database.url);

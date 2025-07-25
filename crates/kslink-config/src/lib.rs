@@ -14,7 +14,7 @@ pub struct KSLinkConfig {
 #[derive(Debug, Clone, Deserialize, Serialize, Educe, PartialEq, Eq, PartialOrd, Ord)]
 #[educe(Default)]
 pub struct DatabaseConfig {
-    #[educe(Default = "postgres://root:root@localhost/postgres")]
+    #[educe(Default = "postgres://postgres:postgres@postgres/postgres")]
     pub url: String,
 
     #[educe(Default = 16)]
@@ -28,15 +28,11 @@ pub struct DatabaseConfig {
 }
 
 impl KSLinkConfig {
-    pub fn new() -> Self {
-        let figment = Figment::from(rocket::Config::default())
+    pub fn get_figment() -> Figment {
+        Figment::from(rocket::Config::default())
             .merge(Serialized::defaults(KSLinkConfig::default()))
-            .merge(Serialized::defaults(rocket::Config::default()))
-            .merge(Toml::file("/etc/kslink.toml").nested())
             .merge(Toml::file("./kslink.toml").nested())
-            .merge(Env::prefixed("KSLINK_").split("_"))
-            .select(Profile::from_env_or("KSLINK_PROFILE", "dev"));
-
-        figment.extract().unwrap()
+            .merge(Env::prefixed("KSLINK_").global())
+            .select(Profile::from_env_or("KSLINK_PROFILE", "dev"))
     }
 }

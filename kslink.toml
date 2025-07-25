@@ -1,10 +1,10 @@
 [default]
-address = "127.0.0.1"
+address = "0.0.0.0"
 port = 8000
 workers = 16
 
 [default.database]
-url = "postgres://postgres:postgres@localhost/postgres"
+url = "postgres://postgres:postgres@postgres/postgres"
 min_connections = 8
 max_connections = 64
 connect_timeout = 16

@@ -22,10 +22,11 @@ async fn rocket() -> _ {
         .with_max_level(LevelFilter::TRACE)
         .init();
 
-    let config = KSLinkConfig::new();
-    let database = setup_database(&config.database).await.unwrap();
+    let config = KSLinkConfig::get_figment();
+    let kslink_config: KSLinkConfig = config.extract().unwrap();
+    let database = setup_database(&kslink_config.database).await.unwrap();
 
-    Rocket::build()
+    Rocket::custom(config)
         .register("/", catchers![handler::default])
         .manage(database)
         .mount(
