@@ -2,11 +2,11 @@ use std::time::Duration;
 
 use kslink_config::{DatabaseConfig, KSLinkConfig};
 use mimalloc::MiMalloc;
-use rocket::{routes, Rocket};
+use rocket::{catchers, launch, routes, Rocket};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use tracing::level_filters::LevelFilter;
 
-use crate::{endpoints::root, error::Error};
+use crate::{endpoints::root, error::Error, middleware::handler};
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
@@ -16,16 +16,17 @@ mod endpoints;
 mod error;
 mod middleware;
 
-#[rocket::main]
-async fn main() -> anyhow::Result<()> {
+#[launch]
+async fn rocket() -> _ {
     tracing_subscriber::fmt()
         .with_max_level(LevelFilter::TRACE)
         .init();
 
     let config = KSLinkConfig::new();
-    let database = setup_database(&config.database).await?;
+    let database = setup_database(&config.database).await.unwrap();
 
     Rocket::build()
+        .register("/", catchers![handler::default])
         .manage(database)
         .mount(
             "/",
@@ -37,10 +38,6 @@ async fn main() -> anyhow::Result<()> {
                 root::delete_link
             ],
         )
-        .launch()
-        .await?;
-
-    Ok(())
 }
 
 async fn setup_database(config: &DatabaseConfig) -> Result<DatabaseConnection, Error> {

@@ -22,7 +22,7 @@ pub async fn post_with_json(
     get_or_create_url(form.0, db.inner()).await
 }
 
-#[post("/?<url>", rank = 1)]
+#[post("/?<url>", rank = 0)]
 #[instrument]
 pub async fn post_with_query(url: String, db: &State<DatabaseConnection>) -> CommonResponse {
     match Url::parse(&url).map_err(Error::from) {
