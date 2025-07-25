@@ -25,7 +25,13 @@ services:
       context: .
       dockerfile: Dockerfile
       target: migration
-    depends_on: [postgres, redis]
+    env_file:
+      - .env
+    depends_on:                  
+      postgres:
+        condition: service_started
+      redis: 
+        condition: service_started
 
   backend:
     build:
@@ -35,7 +41,17 @@ services:
     restart: unless-stopped
     volumes:
       - ./kslink.toml:/app/kslink.toml:ro
-    depends_on: [postgres, migration, redis]
+    env_file:
+      - .env
+    ports:
+      - 9000:9000
+    depends_on: 
+      postgres:
+        condition: service_started
+      redis: 
+        condition: service_started
+      migration:
+        condition: service_completed_successfully
 
 volumes:
   postgres-data:
