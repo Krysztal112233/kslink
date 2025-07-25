@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:17.2-alpine
+    restart: unless-stopped
+    command: -c 'max_connections=128'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 6379:6379
+
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migration
+    depends_on: [postgres, redis]
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+    restart: unless-stopped
+    volumes:
+      - ./kslink.toml:/app/kslink.toml:ro
+    depends_on: [postgres, migration, redis]
+
+volumes:
+  postgres-data:
+  pgo-profile:
