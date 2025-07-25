@@ -5,3 +5,9 @@ use url::Url;
 pub struct CreateRequest {
     pub url: Url,
 }
+
+impl From<Url> for CreateRequest {
+    fn from(url: Url) -> Self {
+        Self { url }
+    }
+}

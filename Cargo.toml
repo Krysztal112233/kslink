@@ -13,7 +13,6 @@ edition = "2024"
 
 [workspace.dependencies]
 anyhow = "1"
-actix-web = "4"
 async-trait = "*"
 educe = "0.6"
 log = "0.4"
@@ -21,11 +20,12 @@ mimalloc = "0.1.47"
 radix_fmt_ng = "1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-simple_logger = "5.0"
 syn = "2.0"
 thiserror = "2"
 tokio = { version = "1", features = ["full"] }
 toml = "0.9"
+tracing = "0.1"
+tracing-subscriber = "0.3"
 url = { version = "2.5", features = ["serde"] }
 
 entity = { path = "crates/entity" }
@@ -44,3 +44,7 @@ features = ["runtime-tokio-rustls", "sqlx-postgres"]
 [workspace.dependencies.sea-orm]
 version = "1.1"
 features = ["runtime-tokio-rustls", "sqlx-postgres", "with-time", "with-json"]
+
+[workspace.dependencies.rocket]
+version = "0.5.1"
+features = ["json"]
