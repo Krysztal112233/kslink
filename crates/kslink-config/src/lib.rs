@@ -48,11 +48,12 @@ pub struct DatabaseConfig {
 
 impl KSLinkConfig {
     pub fn new() -> Self {
-        let figment = Figment::new()
+        let figment = Figment::from(rocket::Config::default())
             .merge(Serialized::defaults(KSLinkConfig::default()))
-            .merge(Toml::file("/etc/kslink.toml"))
-            .merge(Toml::file("./kslink.toml"))
-            .merge(Env::prefixed("KSLINK_"))
+            .merge(Serialized::defaults(rocket::Config::default()))
+            .merge(Toml::file("/etc/kslink.toml").nested())
+            .merge(Toml::file("./kslink.toml").nested())
+            .merge(Env::prefixed("KSLINK_").split("_"))
             .select(Profile::from_env_or("KSLINK_PROFILE", "dev"));
 
         figment.extract().unwrap()

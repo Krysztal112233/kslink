@@ -13,7 +13,7 @@ use crate::{
     error::Error,
 };
 
-#[post("/", data = "<form>")]
+#[post("/", rank = 1, data = "<form>")]
 #[instrument]
 pub async fn post_with_json(
     form: Json<CreateRequest>,
@@ -22,7 +22,7 @@ pub async fn post_with_json(
     get_or_create_url(form.0, db.inner()).await
 }
 
-#[post("/?<url>")]
+#[post("/?<url>", rank = 1)]
 #[instrument]
 pub async fn post_with_query(url: String, db: &State<DatabaseConnection>) -> CommonResponse {
     match Url::parse(&url).map_err(Error::from) {
@@ -31,7 +31,7 @@ pub async fn post_with_query(url: String, db: &State<DatabaseConnection>) -> Com
     }
 }
 
-#[get("/<hash>")]
+#[get("/<hash>", rank = 0)]
 #[instrument]
 pub async fn get_link(
     hash: String,
@@ -47,7 +47,7 @@ pub async fn get_link(
     }
 }
 
-#[delete("/<hash>")]
+#[delete("/<hash>", rank = 1)]
 #[instrument]
 pub async fn delete_link(hash: String) {
     todo!()

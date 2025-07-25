@@ -34,8 +34,8 @@ kslink-backend = { path = "crates/kslink-backend" }
 migration = { path = "crates/migration" }
 
 [workspace.dependencies.figment]
-features = ["toml", "env"]
-git = "https://github.com/Krysztal112233/Figment.git"
+features = ["toml", "env", "json"]
+version = "*"
 
 [workspace.dependencies.sea-orm-migration]
 version = "1.1"
@@ -47,4 +47,7 @@ features = ["runtime-tokio-rustls", "sqlx-postgres", "with-time", "with-json"]
 
 [workspace.dependencies.rocket]
 version = "0.5.1"
-features = ["json"]
+features = ["json", "uuid"]
+
+[patch.crates-io]
+figment = { git = "https://github.com/Krysztal112233/Figment.git" }
