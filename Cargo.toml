@@ -10,6 +10,7 @@ resolver = "3"
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
+license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
 anyhow = "1"
@@ -27,6 +28,7 @@ toml = "0.9"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 url = { version = "2.5", features = ["serde"] }
+redis = { version = "0.32", features = ["tokio-comp", "r2d2"] }
 
 entity = { path = "crates/entity" }
 kslink-config = { path = "crates/kslink-config" }

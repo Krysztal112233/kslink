@@ -4,12 +4,13 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-rocket.workspace = true
 anyhow.workspace = true
 educe.workspace = true
 log.workspace = true
 mimalloc.workspace = true
 radix_fmt_ng.workspace = true
+redis.workspace = true
+rocket.workspace = true
 sea-orm.workspace = true
 serde.workspace = true
 serde_json.workspace = true
