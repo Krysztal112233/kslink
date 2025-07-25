@@ -8,26 +8,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Default, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct KSLinkConfig {
     #[serde(default)]
-    pub actix: ActixConfig,
-
-    #[serde(default)]
     pub database: DatabaseConfig,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize, Educe, PartialEq, Eq, PartialOrd, Ord)]
-#[educe(Default)]
-pub struct ActixConfig {
-    #[educe(Default = 4)]
-    #[serde(default)]
-    pub workers: usize,
-
-    #[educe(Default = "0.0.0.0")]
-    #[serde(default)]
-    pub host: String,
-
-    #[educe(Default = 9000)]
-    #[serde(default)]
-    pub port: u16,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Educe, PartialEq, Eq, PartialOrd, Ord)]
