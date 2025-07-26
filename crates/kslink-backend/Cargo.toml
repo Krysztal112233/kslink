@@ -5,11 +5,12 @@ edition.workspace = true
 
 [dependencies]
 anyhow.workspace = true
+deadpool-redis.workspace = true
+deadpool.workspace = true
 educe.workspace = true
 log.workspace = true
 mimalloc.workspace = true
 radix_fmt_ng.workspace = true
-redis.workspace = true
 rocket.workspace = true
 sea-orm.workspace = true
 serde.workspace = true
