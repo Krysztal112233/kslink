@@ -28,7 +28,7 @@ toml = "0.9"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 url = { version = "2.5", features = ["serde"] }
-redis = { version = "0.32", features = ["tokio-comp", "r2d2"] }
+
 
 entity = { path = "crates/entity" }
 kslink-config = { path = "crates/kslink-config" }
@@ -50,6 +50,10 @@ features = ["runtime-tokio-rustls", "sqlx-postgres", "with-time", "with-json"]
 [workspace.dependencies.rocket]
 version = "0.5.1"
 features = ["json", "uuid"]
+
+[workspace.dependencies.redis]
+version = "0.32"
+features = ["tokio-comp", "tokio-rustls-comp", "r2d2"]
 
 [patch.crates-io]
 figment = { git = "https://github.com/Krysztal112233/Figment.git" }
