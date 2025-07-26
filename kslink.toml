@@ -8,3 +8,6 @@ url = "postgres://postgres:postgres@postgres/postgres"
 min_connections = 8
 max_connections = 64
 connect_timeout = 16
+
+[default.redis]
+url = "redis://redis:6379"

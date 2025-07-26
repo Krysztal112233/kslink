@@ -9,6 +9,9 @@ use serde::{Deserialize, Serialize};
 pub struct KSLinkConfig {
     #[serde(default)]
     pub database: DatabaseConfig,
+
+    #[serde(default)]
+    pub redis: RedisConfig,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Educe, PartialEq, Eq, PartialOrd, Ord)]
@@ -25,6 +28,13 @@ pub struct DatabaseConfig {
 
     #[educe(Default = 8)]
     pub min_connections: u32,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Educe, PartialEq, Eq, PartialOrd, Ord)]
+#[educe(Default)]
+pub struct RedisConfig {
+    #[educe(Default = "redis://redis:6379")]
+    pub url: String,
 }
 
 impl KSLinkConfig {

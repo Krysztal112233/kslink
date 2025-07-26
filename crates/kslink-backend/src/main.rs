@@ -1,7 +1,8 @@
 use std::time::Duration;
 
-use kslink_config::{DatabaseConfig, KSLinkConfig};
+use kslink_config::{DatabaseConfig, KSLinkConfig, RedisConfig};
 use mimalloc::MiMalloc;
+use redis::{Client, RedisError};
 use rocket::{catchers, launch, routes, Rocket};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use tracing::level_filters::LevelFilter;
@@ -25,10 +26,12 @@ async fn rocket() -> _ {
     let config = KSLinkConfig::get_figment();
     let kslink_config: KSLinkConfig = config.extract().unwrap();
     let database = setup_database(&kslink_config.database).await.unwrap();
+    let redis = setup_redis(&kslink_config.redis).await.unwrap();
 
     Rocket::custom(config)
         .register("/", catchers![handler::default])
         .manage(database)
+        .manage(redis)
         .mount(
             "/",
             routes![
@@ -48,4 +51,8 @@ async fn setup_database(config: &DatabaseConfig) -> Result<DatabaseConnection, E
         .connect_timeout(Duration::from_secs(config.connect_timeout));
 
     Ok(Database::connect(opt).await?)
+}
+
+async fn setup_redis(config: &RedisConfig) -> Result<Client, RedisError> {
+    redis::Client::open(config.url.clone())
 }
