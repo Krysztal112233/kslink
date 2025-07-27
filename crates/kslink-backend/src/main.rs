@@ -7,11 +7,12 @@ use rocket::{catchers, launch, routes, Rocket};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use tracing::level_filters::LevelFilter;
 
-use crate::{common::RedisPool, endpoints::root, error::Error, middleware::handler};
+use crate::{cache::RedisPool, endpoints::root, error::Error, middleware::handler};
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
 
+mod cache;
 mod common;
 mod endpoints;
 mod error;
@@ -20,7 +21,7 @@ mod middleware;
 #[launch]
 async fn rocket() -> _ {
     tracing_subscriber::fmt()
-        .with_max_level(LevelFilter::TRACE)
+        .with_max_level(LevelFilter::INFO)
         .init();
 
     let config = KSLinkConfig::get_figment();

@@ -9,7 +9,10 @@ use sea_orm::{ConnectionTrait, DatabaseConnection};
 use tracing::instrument;
 use url::Url;
 
-use crate::common::{hasher::ShortHash, response::Either, CacheLayer};
+use crate::{
+    cache::CacheImpl,
+    common::{hasher::ShortHash, response::Either},
+};
 use crate::{
     common::{request::CreateRequest, response::CommonResponse},
     error::Error,
@@ -20,7 +23,7 @@ use crate::{
 pub async fn post_with_json(
     form: Json<CreateRequest>,
     db: &State<DatabaseConnection>,
-    cache: CacheLayer,
+    cache: CacheImpl,
 ) -> CommonResponse {
     get_or_create_url(form.0, db.inner(), cache).await
 }
@@ -30,7 +33,7 @@ pub async fn post_with_json(
 pub async fn post_with_query(
     url: String,
     db: &State<DatabaseConnection>,
-    cache: CacheLayer,
+    cache: CacheImpl,
 ) -> CommonResponse {
     match Url::parse(&url).map_err(Error::from) {
         Ok(url) => get_or_create_url(CreateRequest { url }, db.inner(), cache).await,
@@ -43,13 +46,13 @@ pub async fn post_with_query(
 pub async fn get_link(
     hash: String,
     db: &State<DatabaseConnection>,
-    mut cache: CacheLayer,
+    mut cache: CacheImpl,
 ) -> Either<Redirect, CommonResponse> {
     let result = cache
-        .get_by_hash(&hash)
+        .get_by_hash(hash.clone())
         .await
         .ok_or(Error::Internal("".to_string()))
-        .or(UrlMapping::get_by_hash(hash, db.inner())
+        .or(UrlMapping::get_by_hash(hash.clone(), db.inner())
             .await
             .inspect(|model| {
                 let model = model.clone();
@@ -90,7 +93,7 @@ where
     Ok(result)
 }
 
-async fn get_or_create_url<C>(c: CreateRequest, db: &C, mut cache: CacheLayer) -> CommonResponse
+async fn get_or_create_url<C>(c: CreateRequest, db: &C, mut cache: CacheImpl) -> CommonResponse
 where
     C: ConnectionTrait,
 {

@@ -1,7 +1,7 @@
 [default]
 address = "0.0.0.0"
 port = 8000
-workers = 16
+workers = 32
 
 [default.database]
 url = "postgres://postgres:postgres@postgres/postgres"
@@ -11,4 +11,4 @@ connect_timeout = 16
 
 [default.redis]
 url = "redis://redis:6379"
-max_size = 16
+max_size = 64

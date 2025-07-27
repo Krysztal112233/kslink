@@ -2,7 +2,7 @@ version: '3'
 
 services:
   postgres:
-    image: postgres:17.2-alpine
+    image: docker.io/library/postgres:17.2-alpine
     restart: unless-stopped
     command: -c 'max_connections=128'
     volumes:
@@ -13,7 +13,7 @@ services:
       - 5432:5432
 
   redis:
-    image: redis:alpine
+    image: docker.io/redis:alpine
     restart: unless-stopped
     env_file:
       - .env
