@@ -11,3 +11,4 @@ connect_timeout = 16
 
 [default.redis]
 url = "redis://redis:6379"
+max_size = 16

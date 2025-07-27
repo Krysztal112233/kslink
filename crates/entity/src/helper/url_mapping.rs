@@ -14,14 +14,12 @@ pub trait UrlMappingHelper {
         A0: AsRef<str> + Send,
         A1: AsRef<str> + Send,
     {
-        Ok(dbg!(
-            url_mapping::ActiveModel {
-                hash: Set(hash.as_ref().to_string()),
-                dest: Set(des.as_ref().to_string()),
-            }
-            .insert(db)
-            .await
-        )?)
+        Ok(url_mapping::ActiveModel {
+            hash: Set(hash.as_ref().to_string()),
+            dest: Set(des.as_ref().to_string()),
+        }
+        .insert(db)
+        .await?)
     }
 
     async fn get_by_hash<C, A>(hash: A, db: &C) -> Result<url_mapping::Model, DbErr>

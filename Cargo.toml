@@ -15,6 +15,7 @@ license = "MIT OR Apache-2.0"
 [workspace.dependencies]
 anyhow = "1"
 async-trait = "*"
+deadpool = "*"
 educe = "0.6"
 log = "0.4"
 mimalloc = "0.1.47"
@@ -28,7 +29,6 @@ toml = "0.9"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 url = { version = "2.5", features = ["serde"] }
-deadpool = "*"
 
 entity = { path = "crates/entity" }
 kslink-config = { path = "crates/kslink-config" }

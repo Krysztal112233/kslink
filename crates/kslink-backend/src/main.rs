@@ -1,13 +1,13 @@
 use std::time::Duration;
 
+use deadpool::Runtime;
 use kslink_config::{DatabaseConfig, KSLinkConfig, RedisConfig};
 use mimalloc::MiMalloc;
-use redis::{Client, RedisError};
 use rocket::{catchers, launch, routes, Rocket};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use tracing::level_filters::LevelFilter;
 
-use crate::{endpoints::root, error::Error, middleware::handler};
+use crate::{common::RedisPool, endpoints::root, error::Error, middleware::handler};
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
@@ -32,6 +32,7 @@ async fn rocket() -> _ {
         .register("/", catchers![handler::default])
         .manage(database)
         .manage(redis)
+        .manage(kslink_config)
         .mount(
             "/",
             routes![
@@ -53,6 +54,10 @@ async fn setup_database(config: &DatabaseConfig) -> Result<DatabaseConnection, E
     Ok(Database::connect(opt).await?)
 }
 
-async fn setup_redis(config: &RedisConfig) -> Result<Client, RedisError> {
-    redis::Client::open(config.url.clone())
+async fn setup_redis(config: &RedisConfig) -> anyhow::Result<RedisPool> {
+    let mut pool = deadpool_redis::Config::from_url(config.url.clone());
+
+    pool.pool = Some(config.deadpool);
+
+    Ok(pool.create_pool(Some(Runtime::Tokio1))?)
 }

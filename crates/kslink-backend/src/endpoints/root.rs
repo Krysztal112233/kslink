@@ -2,12 +2,14 @@ use entity::{
     helper::url_mapping::UrlMappingHelper,
     model::{prelude::*, url_mapping},
 };
-use rocket::{delete, get, http::Status, post, response::Redirect, serde::json::Json, State};
+use rocket::{
+    delete, get, http::Status, post, response::Redirect, serde::json::Json, tokio, State,
+};
 use sea_orm::{ConnectionTrait, DatabaseConnection};
 use tracing::instrument;
 use url::Url;
 
-use crate::common::{hasher::ShortHash, response::Either};
+use crate::common::{hasher::ShortHash, response::Either, CacheLayer};
 use crate::{
     common::{request::CreateRequest, response::CommonResponse},
     error::Error,
@@ -18,15 +20,20 @@ use crate::{
 pub async fn post_with_json(
     form: Json<CreateRequest>,
     db: &State<DatabaseConnection>,
+    cache: CacheLayer,
 ) -> CommonResponse {
-    get_or_create_url(form.0, db.inner()).await
+    get_or_create_url(form.0, db.inner(), cache).await
 }
 
 #[post("/?<url>", rank = 0)]
 #[instrument]
-pub async fn post_with_query(url: String, db: &State<DatabaseConnection>) -> CommonResponse {
+pub async fn post_with_query(
+    url: String,
+    db: &State<DatabaseConnection>,
+    cache: CacheLayer,
+) -> CommonResponse {
     match Url::parse(&url).map_err(Error::from) {
-        Ok(url) => get_or_create_url(CreateRequest { url }, db.inner()).await,
+        Ok(url) => get_or_create_url(CreateRequest { url }, db.inner(), cache).await,
         Err(err) => err.into(),
     }
 }
@@ -36,13 +43,25 @@ pub async fn post_with_query(url: String, db: &State<DatabaseConnection>) -> Com
 pub async fn get_link(
     hash: String,
     db: &State<DatabaseConnection>,
+    mut cache: CacheLayer,
 ) -> Either<Redirect, CommonResponse> {
-    let result = UrlMapping::get_by_hash(hash, db.inner())
+    let result = cache
+        .get_by_hash(&hash)
         .await
-        .map_err(Error::from);
+        .ok_or(Error::Internal("".to_string()))
+        .or(UrlMapping::get_by_hash(hash, db.inner())
+            .await
+            .inspect(|model| {
+                let model = model.clone();
+                tokio::spawn(async move {
+                    cache.write(model.hash, model.dest).await;
+                });
+            })
+            .map_err(Error::from)
+            .map(|m| m.dest));
 
     match result {
-        Ok(model) => Either::Left(Redirect::permanent(model.dest)),
+        Ok(dest) => Either::Left(Redirect::permanent(dest)),
         Err(err) => Either::Right(CommonResponse::from(err)),
     }
 }
@@ -71,11 +90,16 @@ where
     Ok(result)
 }
 
-async fn get_or_create_url<C>(c: CreateRequest, db: &C) -> CommonResponse
+async fn get_or_create_url<C>(c: CreateRequest, db: &C, mut cache: CacheLayer) -> CommonResponse
 where
     C: ConnectionTrait,
 {
-    match get_or_create(c, db).await {
+    match get_or_create(c, db).await.inspect(|model| {
+        let model = model.clone();
+        tokio::spawn(async move {
+            cache.write(model.hash, model.dest).await;
+        });
+    }) {
         Ok(model) => CommonResponse::new(Status::Ok.code)
             .append("hash", serde_json::Value::String(model.hash)),
         Err(err) => err.into(),

@@ -5,16 +5,19 @@ use figment::{
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Default, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
 pub struct KSLinkConfig {
     #[serde(default)]
     pub database: DatabaseConfig,
 
     #[serde(default)]
     pub redis: RedisConfig,
+
+    #[serde(default, flatten)]
+    pub cache: CacheConfig,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Educe, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Deserialize, Serialize, Educe)]
 #[educe(Default)]
 pub struct DatabaseConfig {
     #[educe(Default = "postgres://postgres:postgres@postgres/postgres")]
@@ -30,11 +33,21 @@ pub struct DatabaseConfig {
     pub min_connections: u32,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Educe, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Deserialize, Serialize, Educe)]
 #[educe(Default)]
 pub struct RedisConfig {
     #[educe(Default = "redis://redis:6379")]
     pub url: String,
+
+    #[serde(flatten)]
+    pub deadpool: deadpool_redis::PoolConfig,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Educe)]
+#[educe(Default)]
+pub struct CacheConfig {
+    #[educe(Default = 60)]
+    pub expire: u64,
 }
 
 impl KSLinkConfig {
