@@ -69,12 +69,14 @@ pub async fn get_link(
     }
 }
 
+#[allow(unused)]
 #[delete("/<hash>", rank = 1)]
 #[instrument]
 pub async fn delete_link(hash: String) {
     todo!()
 }
 
+#[allow(unused)]
 #[get("/<hash>/info")]
 #[instrument]
 pub async fn get_link_status(hash: String) {

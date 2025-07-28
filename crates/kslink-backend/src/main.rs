@@ -38,10 +38,10 @@ async fn rocket() -> _ {
             "/",
             routes![
                 root::get_link,
-                root::get_link_status,
+                // root::get_link_status,
                 root::post_with_json,
                 root::post_with_query,
-                root::delete_link
+                // root::delete_link
             ],
         )
 }
