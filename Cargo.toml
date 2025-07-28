@@ -17,6 +17,7 @@ version = "0.1.0"
 [workspace.dependencies]
 anyhow = "1"
 async-trait = "*"
+daisy_rsx = "0.1"
 deadpool = "*"
 dioxus = { version = "0.6", features = ["router"] }
 educe = "0.6"
