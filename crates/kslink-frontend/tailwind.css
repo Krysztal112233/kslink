@@ -1,3 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "daisyui" {
+    themes:
+        nord --default,
+        abyss --prefersdark,
+        cupcake,
+        dracula;
+    root: "body";
+    include:;
+    exclude:;
+    prefix:;
+    logs: true;
+}
+
+@source '../web-pages/**/*.rs';
+@source 'typescript/**/*.ts';
+@source inline("modal modal-box modal-action");
