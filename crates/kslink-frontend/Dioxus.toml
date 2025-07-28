@@ -1,11 +1,9 @@
 [application]
+default_platform = "web"
+out_dir = "dist"
 
 [web.app]
 title = "KSLink - Dead Simple Self-hosting Short Link Service"
 
-[web.resource]
-style = []
-script = []
-
-[web.resource.dev]
-script = []
+[web.watcher]
+reload_html = true
