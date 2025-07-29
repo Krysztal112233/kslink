@@ -50,8 +50,8 @@ pub fn BaseLayout() -> Element {
             component::NavBar {
                 title: "KSLink",
                 links: vec![
-                    (String::from("Home"),String::from("/")),
-                    (String::from("Statistics"),String::from("")),
+                    (Route::Home{}.into(), String::from("Home")),
+                    (Route::Statistics{}.into(), String::from("Statistics")),
                 ]
             },
         },
