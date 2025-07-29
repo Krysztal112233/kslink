@@ -23,7 +23,7 @@ fn NavBarLinks(to: NavigationTarget, title: String) -> Element {
 pub fn UrlInputBox() -> Element {
     rsx! {
         div { class: "join pt-px-8",
-            input { class: "input join-item" },
+            input { class: "input join-item", placeholder: "Input your url" },
             Button { class: "join-item btn-secondary hover:btn-primary",
                 "Make it shorten!"
             }
