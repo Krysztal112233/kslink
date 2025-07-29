@@ -36,7 +36,7 @@ fn App() -> Element {
 }
 
 #[component]
-pub fn BaseLayout() -> Element {
+fn BaseLayout() -> Element {
     rsx! {
         div {
             component::NavBar {
@@ -47,7 +47,7 @@ pub fn BaseLayout() -> Element {
                 ]
             },
         },
-        div { class:"fixed z-10 min-h-full min-w-full bg-base-100",
+        div { class:"z-10",
             Outlet::<Route> {}
         },
         div { }

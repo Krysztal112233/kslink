@@ -2,7 +2,7 @@
 @plugin "daisyui" {
     themes:
         nord --default,
-        abyss --prefersdark;
+        dracula --prefersdark;
     root: "#main";
 }
 

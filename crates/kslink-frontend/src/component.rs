@@ -21,7 +21,14 @@ fn NavBarLinks(to: NavigationTarget, title: String) -> Element {
 
 #[component]
 pub fn UrlInputBox() -> Element {
-    todo!()
+    rsx! {
+        div { class: "join pt-px-8",
+            input { class: "input join-item" },
+            Button { class: "join-item btn-secondary hover:btn-primary",
+                "Make it shorten!"
+            }
+        }
+    }
 }
 
 #[derive(Props, Debug, Clone, PartialEq)]
