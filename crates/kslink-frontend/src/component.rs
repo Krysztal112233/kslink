@@ -1,4 +1,4 @@
-use daisy_rsx::{Button, ButtonScheme, ButtonStyle, ButtonType};
+use daisy_rsx::Button;
 use dioxus::prelude::*;
 
 use crate::Route;
@@ -7,10 +7,8 @@ use crate::Route;
 fn NavBarTitle(title: String) -> Element {
     rsx! {
         div { class: "flex-1",
-            Button { class: "text-xl",
-                button_type: ButtonType::Link,
-                button_style: ButtonStyle::Ghost,
-                Link { to:Route::Home{}, "{title}" }
+            Button { class: "btn-ghost text-xl",
+                Link { to: Route::Home {  }, "{title}" }
             }
         }
     }
@@ -18,13 +16,7 @@ fn NavBarTitle(title: String) -> Element {
 
 #[component]
 fn NavBarLinks(to: NavigationTarget, title: String) -> Element {
-    rsx! {
-        Button {
-            button_style: ButtonStyle::Ghost,
-            button_scheme: ButtonScheme::Accent,
-            Link { class: "text-xl", to: to, "{title}" }
-        }
-    }
+    rsx! { li { Link { class: "text-xl", to: to, "{title}" } } }
 }
 
 #[component]

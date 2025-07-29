@@ -7,13 +7,13 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-black: #000;
     --spacing: 0.25rem;
     --text-xl: 1.25rem;
     --text-xl--line-height: calc(1.75 / 1.25);
-    --text-2xl: 1.5rem;
-    --text-2xl--line-height: calc(2 / 1.5);
     --radius-xl: 0.75rem;
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
@@ -208,6 +208,48 @@
       }
     }
   }
+  .drawer-side {
+    pointer-events: none;
+    visibility: hidden;
+    position: fixed;
+    inset-inline-start: calc(0.25rem * 0);
+    top: calc(0.25rem * 0);
+    z-index: 1;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    grid-template-rows: repeat(1, minmax(0, 1fr));
+    align-items: flex-start;
+    justify-items: start;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    overscroll-behavior: contain;
+    opacity: 0%;
+    transition: opacity 0.2s ease-out 0.1s allow-discrete, visibility 0.3s ease-out 0.1s allow-discrete;
+    height: 100vh;
+    height: 100dvh;
+    > .drawer-overlay {
+      position: sticky;
+      top: calc(0.25rem * 0);
+      cursor: pointer;
+      place-self: stretch;
+      background-color: oklch(0% 0 0 / 40%);
+    }
+    > * {
+      grid-column-start: 1;
+      grid-row-start: 1;
+    }
+    > *:not(.drawer-overlay) {
+      will-change: transform;
+      transition: translate 0.3s ease-out;
+      translate: -100%;
+      [dir="rtl"] & {
+        translate: 100%;
+      }
+    }
+  }
   .drawer-open {
     > .drawer-side {
       overflow-y: auto;
@@ -237,6 +279,28 @@
         pointer-events: auto;
         visibility: visible;
       }
+    }
+  }
+  .drawer-toggle {
+    position: fixed;
+    height: calc(0.25rem * 0);
+    width: calc(0.25rem * 0);
+    appearance: none;
+    opacity: 0%;
+    &:checked {
+      & ~ .drawer-side {
+        pointer-events: auto;
+        visibility: visible;
+        overflow-y: auto;
+        opacity: 100%;
+        & > *:not(.drawer-overlay) {
+          translate: 0%;
+        }
+      }
+    }
+    &:focus-visible ~ .drawer-content label.drawer-button {
+      outline: 2px solid;
+      outline-offset: 2px;
     }
   }
   .menu {
@@ -1212,6 +1276,9 @@
   .fixed {
     position: fixed;
   }
+  .static {
+    position: static;
+  }
   .top-0 {
     top: calc(var(--spacing) * 0);
   }
@@ -1312,6 +1379,11 @@
     overflow-y: auto;
     overscroll-behavior: contain;
   }
+  .drawer-content {
+    grid-column-start: 2;
+    grid-row-start: 1;
+    min-width: calc(0.25rem * 0);
+  }
   .filter {
     display: flex;
     flex-wrap: wrap;
@@ -1399,6 +1471,32 @@
   }
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
+  }
+  .status {
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+    width: calc(0.25rem * 2);
+    height: calc(0.25rem * 2);
+    border-radius: var(--radius-selector);
+    background-color: var(--color-base-content);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+    }
+    background-position: center;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    color: color-mix(in srgb, #000 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in srgb, #000 30%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, var(--color-black) 30%, transparent);
+      }
+    }
+    background-image: radial-gradient( circle at 35% 30%, oklch(1 0 0 / calc(var(--depth) * 0.5)), #0000 );
+    box-shadow: 0 2px 3px -1px currentColor;
+    @supports (color: color-mix(in lab, red, red)) {
+      box-shadow: 0 2px 3px -1px color-mix(in oklab, currentColor calc(var(--depth) * 100%), #0000);
+    }
   }
   .badge {
     display: inline-flex;
@@ -1569,6 +1667,26 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
+  .btn-dash {
+    &:not( .btn-active, :hover, :active:focus, :focus-visible, :disabled, [disabled], .btn-disabled, :checked ) {
+      --btn-shadow: "";
+      border-style: dashed;
+      --btn-bg: #0000;
+      --btn-fg: var(--btn-color);
+      --btn-border: var(--btn-color);
+      --btn-noise: none;
+    }
+    @media (hover: none) {
+      &:hover:not( .btn-active, :active, :focus-visible, :disabled, [disabled], .btn-disabled, :checked ) {
+        --btn-shadow: "";
+        border-style: dashed;
+        --btn-bg: #0000;
+        --btn-fg: var(--btn-color);
+        --btn-border: var(--btn-color);
+        --btn-noise: none;
+      }
+    }
+  }
   .bg-base-100 {
     background-color: var(--color-base-100);
   }
@@ -1584,10 +1702,6 @@
   .px-1 {
     padding-inline: calc(var(--spacing) * 1);
   }
-  .text-2xl {
-    font-size: var(--text-2xl);
-    line-height: var(--tw-leading, var(--text-2xl--line-height));
-  }
   .text-xl {
     font-size: var(--text-xl);
     line-height: var(--tw-leading, var(--text-xl--line-height));
@@ -1597,25 +1711,6 @@
   }
   .text-base-content {
     color: var(--color-base-content);
-  }
-  .btn-link {
-    text-decoration-line: underline;
-    outline-color: currentColor;
-    --btn-border: #0000;
-    --btn-bg: #0000;
-    --btn-fg: var(--color-primary);
-    --btn-noise: none;
-    --btn-shadow: "";
-    &:is(.btn-active, :hover, :active:focus, :focus-visible) {
-      text-decoration-line: underline;
-      --btn-border: #0000;
-      --btn-bg: #0000;
-    }
-    @media (hover: none) {
-      &:hover:not(.btn-active, :active, :focus-visible, :disabled, [disabled], .btn-disabled) {
-        text-decoration-line: none;
-      }
-    }
   }
   .underline {
     text-decoration-line: underline;
@@ -1678,17 +1773,17 @@
     --tw-duration: 150ms;
     transition-duration: 150ms;
   }
+  .ease-in-out {
+    --tw-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
   .ease-out {
     --tw-ease: var(--ease-out);
     transition-timing-function: var(--ease-out);
   }
-  .btn-accent {
-    --btn-color: var(--color-accent);
-    --btn-fg: var(--color-accent-content);
-  }
 }
 @layer base {
-  :where(body),body:has(input.theme-controller[value=nord]:checked),[data-theme=nord] {
+  :where(#main),#main:has(input.theme-controller[value=nord]:checked),[data-theme=nord] {
     color-scheme: light;
     --color-base-100: oklch(95.127% 0.007 260.731);
     --color-base-200: oklch(93.299% 0.01 261.788);
@@ -1722,7 +1817,7 @@
 }
 @layer base {
   @media (prefers-color-scheme: dark) {
-    body {
+    #main {
       color-scheme: dark;
       --color-base-100: oklch(20% 0.08 209);
       --color-base-200: oklch(15% 0.08 209);
@@ -1756,7 +1851,7 @@
   }
 }
 @layer base {
-  body:has(input.theme-controller[value=nord]:checked),[data-theme=nord] {
+  #main:has(input.theme-controller[value=nord]:checked),[data-theme=nord] {
     color-scheme: light;
     --color-base-100: oklch(95.127% 0.007 260.731);
     --color-base-200: oklch(93.299% 0.01 261.788);
@@ -1789,7 +1884,7 @@
   }
 }
 @layer base {
-  body:has(input.theme-controller[value=abyss]:checked),[data-theme=abyss] {
+  #main:has(input.theme-controller[value=abyss]:checked),[data-theme=abyss] {
     color-scheme: dark;
     --color-base-100: oklch(20% 0.08 209);
     --color-base-200: oklch(15% 0.08 209);
@@ -1818,72 +1913,6 @@
     --size-field: 0.25rem;
     --border: 1px;
     --depth: 1;
-    --noise: 0;
-  }
-}
-@layer base {
-  body:has(input.theme-controller[value=cupcake]:checked),[data-theme=cupcake] {
-    color-scheme: light;
-    --color-base-100: oklch(97.788% 0.004 56.375);
-    --color-base-200: oklch(93.982% 0.007 61.449);
-    --color-base-300: oklch(91.586% 0.006 53.44);
-    --color-base-content: oklch(23.574% 0.066 313.189);
-    --color-primary: oklch(85% 0.138 181.071);
-    --color-primary-content: oklch(43% 0.078 188.216);
-    --color-secondary: oklch(89% 0.061 343.231);
-    --color-secondary-content: oklch(45% 0.187 3.815);
-    --color-accent: oklch(90% 0.076 70.697);
-    --color-accent-content: oklch(47% 0.157 37.304);
-    --color-neutral: oklch(27% 0.006 286.033);
-    --color-neutral-content: oklch(92% 0.004 286.32);
-    --color-info: oklch(68% 0.169 237.323);
-    --color-info-content: oklch(29% 0.066 243.157);
-    --color-success: oklch(69% 0.17 162.48);
-    --color-success-content: oklch(26% 0.051 172.552);
-    --color-warning: oklch(79% 0.184 86.047);
-    --color-warning-content: oklch(28% 0.066 53.813);
-    --color-error: oklch(64% 0.246 16.439);
-    --color-error-content: oklch(27% 0.105 12.094);
-    --radius-selector: 1rem;
-    --radius-field: 2rem;
-    --radius-box: 1rem;
-    --size-selector: 0.25rem;
-    --size-field: 0.25rem;
-    --border: 2px;
-    --depth: 1;
-    --noise: 0;
-  }
-}
-@layer base {
-  body:has(input.theme-controller[value=dracula]:checked),[data-theme=dracula] {
-    color-scheme: dark;
-    --color-base-100: oklch(28.822% 0.022 277.508);
-    --color-base-200: oklch(26.805% 0.02 277.508);
-    --color-base-300: oklch(24.787% 0.019 277.508);
-    --color-base-content: oklch(97.747% 0.007 106.545);
-    --color-primary: oklch(75.461% 0.183 346.812);
-    --color-primary-content: oklch(15.092% 0.036 346.812);
-    --color-secondary: oklch(74.202% 0.148 301.883);
-    --color-secondary-content: oklch(14.84% 0.029 301.883);
-    --color-accent: oklch(83.392% 0.124 66.558);
-    --color-accent-content: oklch(16.678% 0.024 66.558);
-    --color-neutral: oklch(39.445% 0.032 275.524);
-    --color-neutral-content: oklch(87.889% 0.006 275.524);
-    --color-info: oklch(88.263% 0.093 212.846);
-    --color-info-content: oklch(17.652% 0.018 212.846);
-    --color-success: oklch(87.099% 0.219 148.024);
-    --color-success-content: oklch(17.419% 0.043 148.024);
-    --color-warning: oklch(95.533% 0.134 112.757);
-    --color-warning-content: oklch(19.106% 0.026 112.757);
-    --color-error: oklch(68.22% 0.206 24.43);
-    --color-error-content: oklch(13.644% 0.041 24.43);
-    --radius-selector: 1rem;
-    --radius-field: 0.5rem;
-    --radius-box: 1rem;
-    --size-selector: 0.25rem;
-    --size-field: 0.25rem;
-    --border: 1px;
-    --depth: 0;
     --noise: 0;
   }
 }

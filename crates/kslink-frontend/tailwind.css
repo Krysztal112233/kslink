@@ -2,16 +2,10 @@
 @plugin "daisyui" {
     themes:
         nord --default,
-        abyss --prefersdark,
-        cupcake,
-        dracula;
-    root: "body";
-    include:;
-    exclude:;
-    prefix:;
-    logs: true;
+        abyss --prefersdark;
+    root: "#main";
 }
 
-@source '../web-pages/**/*.rs';
-@source 'typescript/**/*.ts';
+@source './crates/kslink-frontend/**/*.rs';
+@source './crates/kslink-frontend/**/*.ts';
 @source inline("modal modal-box modal-action");

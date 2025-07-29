@@ -1,5 +1,5 @@
-use crate::view::Statistics;
 use crate::view::Home;
+use crate::view::Statistics;
 use dioxus::prelude::*;
 
 mod component;
