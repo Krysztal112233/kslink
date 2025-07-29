@@ -1,4 +1,31 @@
+use daisy_rsx::{Button, ButtonScheme, ButtonStyle, ButtonType};
 use dioxus::prelude::*;
+
+use crate::Route;
+
+#[component]
+fn NavBarTitle(title: String) -> Element {
+    rsx! {
+        div { class: "flex-1",
+            Button { class: "text-xl",
+                button_type: ButtonType::Link,
+                button_style: ButtonStyle::Ghost,
+                Link { to:Route::Home{}, "{title}" }
+            }
+        }
+    }
+}
+
+#[component]
+fn NavBarLinks(to: NavigationTarget, title: String) -> Element {
+    rsx! {
+        Button {
+            button_style: ButtonStyle::Ghost,
+            button_scheme: ButtonScheme::Accent,
+            Link { class: "text-xl", to: to, "{title}" }
+        }
+    }
+}
 
 #[component]
 pub fn UrlInputBox() -> Element {
@@ -14,13 +41,11 @@ pub struct NavBarProps {
 #[component]
 pub fn NavBar(props: NavBarProps) -> Element {
     rsx! {
-        div { class: "fixed top-0 left-1/2 transform -translate-x-1/2 z-50 w-full mt-4 max-w-15/16 rounded-xl navbar bg-base-300 shadow-xl backdrop-blur",
-            div { class: "flex-1", a { class: "btn btn-link btn-accent text-xl", "{props.title}" } }
+        div { class: "fixed top-0 left-1/2 transform -translate-x-1/2 z-50 w-full mt-4 max-w-15/16 rounded-xl navbar bg-base-300 shadow-xl backdrop-blur text-base-content",
+            NavBarTitle { title: "{props.title}" },
             div { class: "flex-none",
                 ul { class: "menu menu-horizontal px-1",
-                    for (to, name) in props.links {
-                        Link{ class: "btn btn-ghost btn-accent text-xl", to: to, "{name}" }
-                    }
+                    for (to, name) in props.links { NavBarLinks { to: to, title: "{name}" } }
                     ThemeToggle { },
                 }
             }
