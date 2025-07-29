@@ -6,4 +6,5 @@ edition.workspace = true
 [dependencies]
 daisy_rsx.workspace = true
 dioxus.workspace = true
+reqwest.workspace = true
 url.workspace = true
