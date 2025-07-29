@@ -12,3 +12,9 @@ connect_timeout = 16
 [default.redis]
 url = "redis://redis:6379"
 max_size = 64
+
+[dev.database]
+url = "postgres://postgres:postgres@localhost/postgres"
+
+[dev.redis]
+url = "redis://localhost:6379"
