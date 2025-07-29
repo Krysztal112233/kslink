@@ -1,4 +1,3 @@
-use daisy_rsx::Button;
 use dioxus::prelude::*;
 
 use crate::Route;
@@ -7,7 +6,7 @@ use crate::Route;
 fn NavBarTitle(title: String) -> Element {
     rsx! {
         div { class: "flex-1",
-            Button { class: "btn-ghost text-xl",
+            button { class: "btn btn-ghost text-xl",
                 Link { to: Route::Home {  }, "{title}" }
             }
         }
@@ -24,7 +23,7 @@ pub fn UrlInputBox() -> Element {
     rsx! {
         div { class: "join pt-px-8",
             input { class: "input join-item", placeholder: "Input your url" },
-            Button { class: "join-item btn-secondary hover:btn-primary",
+            button { class: "btn join-item btn-secondary hover:btn-primary",
                 "Make it shorten!"
             }
         }
