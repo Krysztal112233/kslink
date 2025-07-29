@@ -754,9 +754,6 @@
     overflow-y: auto;
     overscroll-behavior: contain;
   }
-  .m-10 {
-    margin: calc(var(--spacing) * 10);
-  }
   .label {
     display: inline-flex;
     align-items: center;
@@ -803,15 +800,6 @@
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
   }
-  .mt-8 {
-    margin-top: calc(var(--spacing) * 8);
-  }
-  .mt-10 {
-    margin-top: calc(var(--spacing) * 10);
-  }
-  .mr-10 {
-    margin-right: calc(var(--spacing) * 10);
-  }
   .navbar {
     display: flex;
     width: 100%;
@@ -830,9 +818,6 @@
   }
   .w-full {
     width: 100%;
-  }
-  .max-w-10\/12 {
-    max-width: calc(10/12 * 100%);
   }
   .max-w-15\/16 {
     max-width: calc(15/16 * 100%);
@@ -864,28 +849,11 @@
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
-  .place-content-center {
-    place-content: center;
-  }
-  .justify-center {
-    justify-content: center;
-  }
   .rounded-xl {
     border-radius: var(--radius-xl);
   }
-  .glass {
-    border: none;
-    backdrop-filter: blur(var(--glass-blur, 40px));
-    background-color: #0000;
-    background-image: linear-gradient( 135deg, oklch(100% 0 0 / var(--glass-opacity, 30%)) 0%, oklch(0% 0 0 / 0%) 100% ), linear-gradient( var(--glass-reflect-degree, 100deg), oklch(100% 0 0 / var(--glass-reflect-opacity, 5%)) 25%, oklch(0% 0 0 / 0%) 25% );
-    box-shadow: 0 0 0 1px oklch(100% 0 0 / var(--glass-border-opacity, 20%)) inset, 0 0 0 2px oklch(0% 0 0 / 5%);
-    text-shadow: 0 1px oklch(0% 0 0 / var(--glass-text-shadow-opacity, 5%));
-  }
   .bg-base-100 {
     background-color: var(--color-base-100);
-  }
-  .bg-base-200 {
-    background-color: var(--color-base-200);
   }
   .bg-base-300 {
     background-color: var(--color-base-300);
@@ -893,20 +861,11 @@
   .bg-primary {
     background-color: var(--color-primary);
   }
-  .bg-secondary {
-    background-color: var(--color-secondary);
-  }
   .fill-current {
     fill: currentcolor;
   }
-  .p-10 {
-    padding: calc(var(--spacing) * 10);
-  }
   .px-1 {
     padding-inline: calc(var(--spacing) * 1);
-  }
-  .px-10 {
-    padding-inline: calc(var(--spacing) * 10);
   }
   .text-xl {
     font-size: var(--text-xl);

@@ -8,7 +8,7 @@ pub fn UrlInputBox() -> Element {
 #[derive(Props, Debug, Clone, PartialEq)]
 pub struct NavBarProps {
     title: String,
-    links: Vec<(String, String)>,
+    links: Vec<(NavigationTarget, String)>,
 }
 
 #[component]
@@ -18,10 +18,8 @@ pub fn NavBar(props: NavBarProps) -> Element {
             div { class: "flex-1", a { class: "btn btn-link btn-accent text-xl", "{props.title}" } }
             div { class: "flex-none",
                 ul { class: "menu menu-horizontal px-1",
-                    for (name, link) in props.links {
-                        li {
-                            a { class: "btn btn-ghost btn-accent text-xl", href:"{link}", "{name}" }
-                        }
+                    for (to, name) in props.links {
+                        Link{ class: "btn btn-ghost btn-accent text-xl", to: to, "{name}" }
                     }
                     ThemeToggle { },
                 }
