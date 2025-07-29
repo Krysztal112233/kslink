@@ -6,4 +6,5 @@ edition.workspace = true
 [dependencies]
 dioxus.workspace = true
 reqwest.workspace = true
+thiserror.workspace = true
 url.workspace = true
