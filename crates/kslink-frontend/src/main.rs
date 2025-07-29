@@ -1,6 +1,9 @@
+use crate::view::Statistics;
+use crate::view::Home;
 use dioxus::prelude::*;
 
 mod component;
+mod view;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -30,17 +33,6 @@ fn App() -> Element {
             Router::<Route> {}
         }
     }
-}
-
-/// Home page
-#[component]
-fn Home() -> Element {
-    rsx! {}
-}
-
-#[component]
-pub fn Statistics() -> Element {
-    rsx! {}
 }
 
 #[component]
