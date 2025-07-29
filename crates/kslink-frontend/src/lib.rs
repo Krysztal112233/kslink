@@ -1,11 +1,11 @@
-use crate::view::{Home, Statistics};
+use crate::view::{Home, PageNotFound, Statistics};
 
 use dioxus::prelude::*;
 
 mod component;
 mod view;
 
-#[derive(Debug, Clone, Routable, PartialEq)]
+#[derive(Debug, Clone, Routable, PartialEq, PartialOrd)]
 #[rustfmt::skip]
 enum Route {
     #[layout(BaseLayout)]
@@ -13,7 +13,10 @@ enum Route {
     Home {},
 
     #[route("/statistics")]
-     Statistics {},
+    Statistics {},
+
+    #[route("/:..route")]
+    PageNotFound { route: Vec<String> },
 }
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");

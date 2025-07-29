@@ -1796,6 +1796,9 @@
   .px-1 {
     padding-inline: calc(var(--spacing) * 1);
   }
+  .py-6 {
+    padding-block: calc(var(--spacing) * 6);
+  }
   .text-center {
     text-align: center;
   }
