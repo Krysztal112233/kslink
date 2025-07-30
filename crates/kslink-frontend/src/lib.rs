@@ -3,6 +3,7 @@ use crate::view::{Home, PageNotFound, Statistics};
 use dioxus::prelude::*;
 
 mod component;
+mod request;
 mod view;
 
 #[derive(Debug, Clone, Routable, PartialEq, PartialOrd)]

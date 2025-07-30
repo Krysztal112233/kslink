@@ -81,3 +81,40 @@ pub fn ThemeToggle() -> Element {
         }
     }
 }
+
+#[derive(Debug, Props, Clone, PartialEq)]
+pub struct StatisticsItemProps {
+    pub title: String,
+    pub value: String,
+    pub desc: Option<String>,
+    pub icon: Option<Element>,
+}
+
+#[component]
+pub fn StatisticsItem(props: StatisticsItemProps) -> Element {
+    rsx! {
+        div { class: "stat",
+            if let Some(icon) = props.icon { div { class: "stat-figure text-secondary", {icon} } }
+            div { class: "stat-title text-xl", "{props.title}" }
+            div { class: "stat-value", "{props.value}" }
+            if let Some(desc) = props.desc { div { class: "stat-desc", "{desc}" } }
+        }
+    }
+}
+
+#[derive(Debug, Props, PartialEq, Clone)]
+pub struct StatisticsListProps {
+    class: Option<String>,
+    children: Element,
+}
+
+#[component]
+pub fn StatisticsList(props: StatisticsListProps) -> Element {
+    let class = props.class.unwrap_or_default();
+
+    rsx! {
+        div { class: "stats hover:shadow-md duration-200 {class}",
+            { props.children }
+        }
+    }
+}
