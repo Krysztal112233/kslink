@@ -1,0 +1,7 @@
+:9000 {
+	root * /app
+	file_server {
+		precompressed
+	}
+	encode zstd gzip
+}
