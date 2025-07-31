@@ -8,3 +8,7 @@ dioxus.workspace = true
 reqwest.workspace = true
 thiserror.workspace = true
 url.workspace = true
+
+[features]
+default = ["web"]
+web = ["dioxus/web"]

@@ -18,7 +18,7 @@ version = "0.1.0"
 anyhow = "1"
 async-trait = "*"
 deadpool = "*"
-dioxus = { version = "0.6", features = ["router"] }
+dioxus = { version = "0.7.0-alpha.3", features = ["router"] }
 educe = "0.6"
 log = "0.4"
 mimalloc = "0.1.47"
