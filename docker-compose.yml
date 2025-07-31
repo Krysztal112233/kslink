@@ -53,6 +53,14 @@ services:
       migration:
         condition: service_completed_successfully
 
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend
+    ports:
+      - 9010:9000
+
 volumes:
   postgres-data:
   pgo-profile:
