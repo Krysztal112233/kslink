@@ -1,6 +1,7 @@
-use dioxus::prelude::*;
+use dioxus::{html::tr, prelude::*};
+use dioxus_logger::tracing;
 
-use crate::Route;
+use crate::{common, Route};
 
 #[component]
 fn NavBarTitle(title: String) -> Element {
@@ -20,9 +21,25 @@ fn NavBarLinks(to: NavigationTarget, title: String) -> Element {
 
 #[component]
 pub fn UrlInputBox() -> Element {
+    let mut signal_url = use_signal(String::new);
+    let mut signal_valid_url = use_signal(String::new);
+    let mut signal_ok = use_signal(|| false);
+
+    let input_event = move |event: Event<FormData>| {
+        signal_url.set(event.value());
+
+        if common::is_valid_url(event.value()) {
+            signal_valid_url.set("input-success".to_string());
+            signal_ok.set(true);
+        } else {
+            signal_valid_url.set("input-error".to_string());
+            signal_ok.set(false);
+        }
+    };
+
     rsx! {
         div { class: "join pt-px-8",
-            input { class: "input join-item", placeholder: "Input your url" },
+            input { class: "input join-item {signal_valid_url}", placeholder: "https://...", oninput: input_event  },
             button { class: "btn join-item btn-secondary hover:btn-primary",
                 "Make it shorten!"
             }
