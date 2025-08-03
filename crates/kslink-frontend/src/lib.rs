@@ -2,6 +2,7 @@ use crate::view::{Home, PageNotFound, Statistics};
 
 use dioxus::prelude::*;
 
+mod common;
 mod component;
 mod request;
 mod view;
