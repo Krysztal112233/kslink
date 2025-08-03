@@ -1,7 +1,10 @@
-use dioxus::{html::tr, prelude::*};
-use dioxus_logger::tracing;
+use std::str::FromStr;
 
-use crate::{common, Route};
+use dioxus::prelude::*;
+use dioxus_logger::tracing;
+use url::Url;
+
+use crate::{common, request::Requester, Route};
 
 #[component]
 fn NavBarTitle(title: String) -> Element {
@@ -22,25 +25,42 @@ fn NavBarLinks(to: NavigationTarget, title: String) -> Element {
 #[component]
 pub fn UrlInputBox() -> Element {
     let mut signal_url = use_signal(String::new);
-    let mut signal_valid_url = use_signal(String::new);
+    let mut signal_valid_url = use_signal(|| "");
     let mut signal_ok = use_signal(|| false);
 
-    let input_event = move |event: Event<FormData>| {
+    let mut signal_btn_enable = use_signal(|| "btn-disabled");
+
+    let event_input = move |event: Event<FormData>| {
         signal_url.set(event.value());
 
         if common::is_valid_url(event.value()) {
-            signal_valid_url.set("input-success".to_string());
+            signal_valid_url.set("input-success");
             signal_ok.set(true);
+            signal_btn_enable.set("");
         } else {
-            signal_valid_url.set("input-error".to_string());
+            signal_valid_url.set("input-error");
             signal_ok.set(false);
+            signal_btn_enable.set("btn-disabled");
         }
+    };
+    let event_click = move |_: Event<MouseData>| async move {
+        signal_btn_enable.set("btn-disabled");
+
+        let url = signal_url.to_string();
+        let Ok(url) = Url::from_str(&url) else {
+            return;
+        };
+
+        tracing::info!("create short link for url {url}");
+        let _ = Requester::new().create(url).await;
+
+        signal_btn_enable.set("");
     };
 
     rsx! {
         div { class: "join pt-px-8",
-            input { class: "input join-item {signal_valid_url}", placeholder: "https://...", oninput: input_event  },
-            button { class: "btn join-item btn-secondary hover:btn-primary",
+            input { class: "input join-item {signal_valid_url}", placeholder: "https://...", oninput: event_input  },
+            button { class: "btn {signal_btn_enable} join-item btn-secondary hover:btn-primary", onclick: event_click,
                 "Make it shorten!"
             }
         }
