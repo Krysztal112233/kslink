@@ -1,6 +1,7 @@
 use crate::view::{Home, PageNotFound, Statistics};
 
 use dioxus::prelude::*;
+use dioxus_logger::tracing::info;
 
 mod common;
 mod component;
@@ -27,6 +28,9 @@ const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 
 #[component]
 pub fn App() -> Element {
+    info!("base url: {}", common::BASE_URL);
+    info!("build time: {}", common::BUILD_TIME);
+
     rsx! {
         div { class: "bg-primary duration-150",
             document::Link { rel: "icon", href: FAVICON }

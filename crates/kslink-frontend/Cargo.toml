@@ -5,10 +5,14 @@ edition.workspace = true
 build = "build.rs"
 
 [dependencies]
+dioxus-logger.workspace = true
 dioxus.workspace = true
 reqwest.workspace = true
 thiserror.workspace = true
 url.workspace = true
+
+[build-dependencies]
+chrono.workspace = true
 
 [features]
 default = ["web"]
