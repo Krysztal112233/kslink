@@ -2,6 +2,7 @@
 name = "kslink-frontend"
 version.workspace = true
 edition.workspace = true
+build = "build.rs"
 
 [dependencies]
 dioxus.workspace = true
