@@ -5,6 +5,7 @@ use dioxus_logger::tracing::info;
 
 mod common;
 mod component;
+mod error;
 mod request;
 mod view;
 
