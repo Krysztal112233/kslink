@@ -17,8 +17,10 @@ version = "0.1.0"
 [workspace.dependencies]
 anyhow = "1"
 async-trait = "*"
+chrono = { version = "0.4", features = ["serde"] }
 deadpool = "*"
 dioxus = { version = "0.7.0-alpha.3", features = ["router"] }
+dioxus-logger = "0.7.0-alpha.3"
 educe = "0.6"
 log = "0.4"
 mimalloc = "0.1.47"

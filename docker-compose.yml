@@ -44,7 +44,7 @@ services:
     env_file:
       - .env
     ports:
-      - 9000:9000
+      - 8000:8000
     depends_on: 
       postgres:
         condition: service_started
@@ -59,7 +59,7 @@ services:
       dockerfile: Dockerfile
       target: frontend
     ports:
-      - 9010:9000
+      - 9000:9000
 
 volumes:
   postgres-data:
