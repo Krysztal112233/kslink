@@ -3,6 +3,7 @@ use url::Url;
 
 pub(crate) type Result<T> = ::std::result::Result<T, Error>;
 
+#[allow(unused)]
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("internal error: {0}")]

@@ -22,11 +22,10 @@ impl Requester {
     }
 
     pub async fn create(&self, from: Url) -> error::Result<String> {
-        let url = common::BASE_URL;
         let res = self
             .client
-            .post(url)
-            .query(&("url", from))
+            .post(common::BASE_URL)
+            .query(&[("url", from.as_str())])
             .send()
             .await
             .inspect_err(|err| tracing::error!("{err}"))?;
