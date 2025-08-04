@@ -58,6 +58,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: frontend
+    restart: unless-stopped
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
     ports:
