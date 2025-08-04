@@ -24,44 +24,94 @@ fn NavBarLinks(to: NavigationTarget, title: String) -> Element {
 
 #[component]
 pub fn UrlInputBox() -> Element {
-    let mut signal_url = use_signal(String::new);
-    let mut signal_valid_url = use_signal(|| "");
-    let mut signal_ok = use_signal(|| false);
+    let mut url = use_signal(String::new);
+    let mut is_working = use_signal(|| false);
+    let mut short_url = use_signal(|| None::<String>);
 
-    let mut signal_btn_enable = use_signal(|| "btn-disabled");
-
-    let event_input = move |event: Event<FormData>| {
-        signal_url.set(event.value());
-
-        if common::is_valid_url(event.value()) {
-            signal_valid_url.set("input-success");
-            signal_ok.set(true);
-            signal_btn_enable.set("");
+    let is_valid = url.with(|u| common::is_valid_url(u));
+    let input_class = format!(
+        "input join-item {}",
+        if is_valid {
+            "input-success"
         } else {
-            signal_valid_url.set("input-error");
-            signal_ok.set(false);
-            signal_btn_enable.set("btn-disabled");
+            "input-error"
         }
+    );
+    let btn_class = format!(
+        "btn join-item btn-secondary hover:btn-primary {}",
+        if !is_valid || is_working() {
+            "btn-disabled"
+        } else {
+            ""
+        }
+    );
+
+    let on_input = move |event: Event<FormData>| {
+        short_url.set(None);
+        url.set(event.value());
     };
-    let event_click = move |_: Event<MouseData>| async move {
-        signal_btn_enable.set("btn-disabled");
 
-        let url = signal_url.to_string();
-        let Ok(url) = Url::from_str(&url) else {
+    let on_submit = move |_: Event<MouseData>| async move {
+        if !is_valid || is_working() {
             return;
-        };
+        }
 
-        tracing::info!("create short link for url {url}");
-        let _ = Requester::new().create(url).await;
+        is_working.set(true);
 
-        signal_btn_enable.set("");
+        if let Ok(url) = Url::from_str(&url()) {
+            tracing::info!("Creating short link for url {url}");
+            if let Ok(result) = Requester::new().create(url).await {
+                short_url.set(Some(format!("{}/{result}", common::BASE_URL)));
+            }
+        }
+
+        is_working.set(false);
     };
 
     rsx! {
-        div { class: "join pt-px-8",
-            input { class: "input join-item {signal_valid_url}", placeholder: "https://...", oninput: event_input  },
-            button { class: "btn {signal_btn_enable} join-item btn-secondary hover:btn-primary", onclick: event_click,
-                "Make it shorten!"
+        div {
+            div { class: "join pt-px-8",
+                input {
+                    class: input_class,
+                    placeholder: "https://...",
+                    oninput: on_input,
+                    value: "{url}",
+                },
+                button {
+                    class: btn_class,
+                    onclick: on_submit,
+                    disabled: !is_valid || is_working(),
+                    if !is_working() {
+                        "Make it shorter!"
+                    } else {
+                        span { class: "loading loading-spinner loading-md" }
+                    }
+                }
+            }
+
+            if let Some(url) = short_url() {
+                div { class: "alert alert-success mt-4",
+                    svg {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        class: "stroke-current shrink-0 h-6 w-6",
+                        fill: "none",
+                        view_box: "0 0 24 24",
+                        path {
+                            stroke_linecap: "round",
+                            stroke_linejoin: "round",
+                            stroke_width: "2",
+                            d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        }
+                    }
+                    span { "Your short URL is: "
+                        a {
+                            href: "{url}",
+                            target: "_blank",
+                            class: "link link-hover",
+                            "{url}"
+                        }
+                    }
+                }
             }
         }
     }
