@@ -56,6 +56,6 @@ impl KSLinkConfig {
             .merge(Serialized::defaults(KSLinkConfig::default()))
             .merge(Toml::file("./kslink.toml").nested())
             .merge(Env::prefixed("KSLINK_").global())
-            .select(Profile::from_env_or("KSLINK_PROFILE", "dev"))
+            .select(Profile::from_env_or("KSLINK_PROFILE", "debug"))
     }
 }
