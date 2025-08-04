@@ -130,6 +130,7 @@ pub fn NavBar(props: NavBarProps) -> Element {
             NavBarTitle { title: "{props.title}" },
             div { class: "flex-none",
                 ul { class: "menu menu-horizontal px-1",
+                    li { Link { class: "text-xl", to: "https://github.com/Krysztal112233/kslink", "GitHub" } }
                     for (to, name) in props.links { NavBarLinks { to: to, title: "{name}" } }
                     ThemeToggle { },
                 }
