@@ -2,6 +2,7 @@ FROM docker.io/library/rust:slim-trixie AS builder
 WORKDIR /builder
 RUN apt update && apt install build-essential curl wget file libssl-dev pkg-config -y
 COPY . .
+RUN cargo fetch --locked
 RUN cargo build --all -r --exclude kslink-frontend
 
 FROM docker.io/library/debian:trixie-slim AS migration
@@ -21,5 +22,4 @@ RUN dx build -r -p kslink-frontend
 FROM docker.io/library/caddy:alpine AS frontend
 WORKDIR /app
 COPY --from=frontend-builder /builder/target/dx/kslink-frontend/release/web/public/ .
-COPY ./Caddyfile /etc/caddy/Caddyfile
 EXPOSE 9000

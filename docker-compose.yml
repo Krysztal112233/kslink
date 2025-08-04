@@ -58,6 +58,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: frontend
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
     ports:
       - 9000:9000
 

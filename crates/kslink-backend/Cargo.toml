@@ -14,6 +14,7 @@ moka.workspace = true
 once_cell.workspace = true
 radix_fmt_ng.workspace = true
 rocket.workspace = true
+rocket_cors.workspace = true
 sea-orm.workspace = true
 serde.workspace = true
 serde_json.workspace = true

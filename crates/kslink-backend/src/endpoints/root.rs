@@ -3,7 +3,7 @@ use entity::{
     model::{prelude::*, url_mapping},
 };
 use rocket::{
-    delete, get, http::Status, post, response::Redirect, serde::json::Json, tokio, State,
+    delete, get, http::Status, options, post, response::Redirect, serde::json::Json, tokio, State,
 };
 use sea_orm::{ConnectionTrait, DatabaseConnection};
 use tracing::instrument;
@@ -17,6 +17,9 @@ use crate::{
     common::{request::CreateRequest, response::CommonResponse},
     error::Error,
 };
+
+#[options("/<_..>")]
+pub async fn all_options() {}
 
 #[post("/", rank = 1, data = "<form>")]
 #[instrument]

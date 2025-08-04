@@ -31,17 +31,17 @@ async fn rocket() -> _ {
 
     Rocket::custom(config)
         .register("/", catchers![handler::default])
+        .attach(common::fairing::Cors)
         .manage(database)
         .manage(redis)
         .manage(kslink_config)
         .mount(
             "/",
             routes![
+                root::all_options,
                 root::get_link,
-                // root::get_link_status,
                 root::post_with_json,
                 root::post_with_query,
-                // root::delete_link
             ],
         )
 }
