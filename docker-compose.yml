@@ -58,7 +58,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: frontend
-    restart: unless-stopped
+      args:
+        KSLINK_BASE_URL: ${KSLINK_BASE_URL}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
     ports:
