@@ -1,13 +1,27 @@
-use dioxus_logger::tracing;
+use dioxus_logger::tracing::error;
 use reqwest::Client;
-use serde_json::Value;
+use serde::Deserialize;
 use url::Url;
 
-use crate::{common, error};
+use crate::{
+    common,
+    error::{Error, Result},
+};
 
 #[derive(Debug)]
 pub struct Requester {
     client: Client,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct Statistics {
+    pub count: u64,
+    pub visit: u64,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct MakeHash {
+    pub hash: String,
 }
 
 #[allow(unused)]
@@ -21,34 +35,48 @@ impl Requester {
         }
     }
 
-    pub async fn create(&self, from: Url) -> error::Result<String> {
+    pub async fn create(&self, from: Url) -> Result<MakeHash> {
         let res = self
             .client
             .post(common::BASE_URL)
             .query(&[("url", from.as_str())])
             .send()
             .await
-            .inspect_err(|err| tracing::error!("{err}"))?;
+            .inspect_err(|err| error!("{err}"))?;
 
         if res.status().is_success() {
-            let res = res
-                .json::<Value>()
-                .await
-                .inspect_err(|err| tracing::error!("{err}"))?;
-
-            Ok(res["hash"]
-                .as_str()
-                .ok_or(error::Error::Unknown("unknow format".to_string()))?
-                .to_string())
+            Ok(res.json().await.inspect_err(|err| error!("{err}"))?)
         } else {
-            Err(error::Error::Unknown(format!(
+            Err(Error::Unknown(format!(
                 "server status {}",
                 res.status().as_u16()
             )))
         }
     }
 
-    pub async fn statistics(&self) -> error::Result<()> {
-        todo!()
+    pub async fn statistics(&self) -> Result<Statistics> {
+        let url = Url::parse(common::BASE_URL)
+            .unwrap()
+            .join("statistics")
+            .unwrap();
+
+        let res = self
+            .client
+            .get(url)
+            .send()
+            .await
+            .inspect_err(|err| error!("{err}"))?;
+
+        if res.status().is_success() {
+            Ok(res
+                .json::<Statistics>()
+                .await
+                .inspect_err(|err| error!("{err}"))?)
+        } else {
+            Err(Error::Unknown(format!(
+                "server status {}",
+                res.status().as_u16()
+            )))
+        }
     }
 }

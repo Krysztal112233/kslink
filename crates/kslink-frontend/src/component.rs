@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use dioxus_logger::tracing;
 use url::Url;
 
-use crate::{Route, common, request::Requester};
+use crate::{common, request::Requester, Route};
 
 #[component]
 fn NavBarTitle(title: String) -> Element {
@@ -59,9 +59,14 @@ pub fn UrlInputBox() -> Element {
         is_working.set(true);
 
         if let Ok(url) = Url::from_str(&url()) {
-            tracing::info!("Creating short link for url {url}");
+            tracing::info!("creating short link for url: {url}");
             if let Ok(result) = Requester::new().create(url).await {
-                short_url.set(Some(format!("{}/{result}", common::BASE_URL)));
+                let url = Url::from_str(common::BASE_URL)
+                    .unwrap()
+                    .join(&result.hash)
+                    .unwrap();
+
+                short_url.set(Some(format!("{url}",)));
             }
         }
 
@@ -174,18 +179,16 @@ pub fn ThemeToggle() -> Element {
 pub struct StatisticsItemProps {
     pub title: String,
     pub value: String,
-    pub desc: Option<String>,
-    pub icon: Option<Element>,
+    pub subtitle: String,
 }
 
 #[component]
 pub fn StatisticsItem(props: StatisticsItemProps) -> Element {
     rsx! {
         div { class: "stat",
-            if let Some(icon) = props.icon { div { class: "stat-figure text-secondary", {icon} } }
             div { class: "stat-title text-xl", "{props.title}" }
             div { class: "stat-value", "{props.value}" }
-            if let Some(desc) = props.desc { div { class: "stat-desc", "{desc}" } }
+            div { class: "stat-desc", "{props.subtitle}" }
         }
     }
 }
@@ -201,7 +204,7 @@ pub fn StatisticsList(props: StatisticsListProps) -> Element {
     let class = props.class.unwrap_or_default();
 
     rsx! {
-        div { class: "stats hover:shadow-md duration-200 {class}",
+        div { class: "stats shadow hover:shadow-md duration-200 {class}",
             { props.children }
         }
     }
