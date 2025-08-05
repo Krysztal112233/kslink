@@ -2,8 +2,6 @@ use std::time::Duration;
 
 use deadpool::Runtime;
 use kslink_config::{DatabaseConfig, KSLinkConfig, RedisConfig};
-use log::warn;
-use migration::{Migrator, MigratorTrait};
 use mimalloc::MiMalloc;
 use rocket::{catchers, launch, routes, Rocket};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
