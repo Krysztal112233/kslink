@@ -5,11 +5,16 @@ use kslink_config::{DatabaseConfig, KSLinkConfig, RedisConfig};
 use log::warn;
 use migration::{Migrator, MigratorTrait};
 use mimalloc::MiMalloc;
-use rocket::{catchers, launch, routes, Rocket};
+use rocket::{Rocket, catchers, launch, routes};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use tracing::level_filters::LevelFilter;
 
-use crate::{cache::RedisPool, endpoints::root, error::Error, middleware::handler};
+use crate::{
+    cache::RedisPool,
+    endpoints::{root, statistics},
+    error::Error,
+    middleware::handler,
+};
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
@@ -49,6 +54,7 @@ async fn rocket() -> _ {
                 root::post_with_query,
             ],
         )
+        .mount("/statistics", routes![statistics::get_statistics])
 }
 
 async fn setup_database(config: &DatabaseConfig) -> Result<DatabaseConnection, Error> {

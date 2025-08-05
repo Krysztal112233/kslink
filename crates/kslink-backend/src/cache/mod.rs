@@ -3,17 +3,18 @@ use std::{convert::Infallible, fmt::Debug};
 
 use deadpool::managed::Pool;
 use deadpool_redis::{Connection, Manager};
-use entity::helper::url_mapping::Statistics;
+use entity::helper::url_mapping::{Statistics, UrlMappingHelper};
+use entity::model::prelude::*;
 use kslink_config::KSLinkConfig;
-use log::warn;
 use rocket::{
-    async_trait,
+    Request, async_trait,
     request::{FromRequest, Outcome},
-    Request,
 };
+use sea_orm::DatabaseConnection;
 
 use crate::cache::moka::MokaCache;
 use crate::cache::redis::RedisCache;
+use crate::error::Error;
 
 pub mod moka;
 pub mod redis;
@@ -35,11 +36,11 @@ pub trait KVCache: Sync + Send {
         self.put(&format!("kslink.hash.{hash}"), url).await;
     }
 
-    async fn get_statistics(&mut self) -> Option<Statistics> {
-        let statistics = self.get("kslink.statistics").await?;
-        serde_json::from_str(&statistics)
-            .inspect_err(|err| warn!("cannot deserializing cache of `kslink.statistics`: {err}"))
-            .ok()
+    async fn get_statistics(&mut self, db: &DatabaseConnection) -> Result<Statistics, Error> {
+        self.get("kslink.statistics")
+            .await
+            .map(|data| serde_json::from_str::<Statistics>(&data).map_err(Error::from))
+            .unwrap_or(UrlMapping::get_statistics(db).await.map_err(Error::from))
     }
 }
 

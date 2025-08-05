@@ -1,8 +1,8 @@
-use deadpool_redis::{redis::AsyncTypedCommands, Connection};
+use deadpool_redis::{Connection, redis::AsyncTypedCommands};
 use kslink_config::CacheConfig;
 use rocket::async_trait;
 
-use crate::cache::{moka::MokaCache, KVCache};
+use crate::cache::{KVCache, moka::MokaCache};
 
 pub struct RedisCache {
     conn: Connection,

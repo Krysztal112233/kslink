@@ -1,7 +1,7 @@
 use educe::Educe;
 use figment::{
-    providers::{Env, Format, Serialized, Toml},
     Figment, Profile,
+    providers::{Env, Format, Serialized, Toml},
 };
 use serde::{Deserialize, Serialize};
 

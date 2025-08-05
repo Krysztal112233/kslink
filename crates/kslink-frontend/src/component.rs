@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use dioxus_logger::tracing;
 use url::Url;
 
-use crate::{common, request::Requester, Route};
+use crate::{Route, common, request::Requester};
 
 #[component]
 fn NavBarTitle(title: String) -> Element {

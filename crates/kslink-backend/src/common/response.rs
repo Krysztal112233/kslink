@@ -1,10 +1,11 @@
 use std::{collections::HashMap, io::Cursor};
 
 use educe::Educe;
+use log::{error, warn};
 use rocket::{
+    Response,
     http::{ContentType, Status},
     response::Responder,
-    Response,
 };
 use serde::{Deserialize, Serialize};
 
@@ -49,8 +50,23 @@ impl CommonResponse {
         Self { ..self }
     }
 
-    pub fn append_all(mut self, all: HashMap<String, serde_json::Value>) -> Self {
-        self.data.extend(all);
+    pub fn append_all<T>(mut self, value: T) -> Self
+    where
+        T: Serialize,
+    {
+        let Ok(value) =
+            serde_json::to_value(value).inspect_err(|err| error!("while serializing: {err}"))
+        else {
+            return self;
+        };
+
+        match value {
+            serde_json::Value::Object(map) => self.data.extend(map),
+            _ => warn!(
+                "cannot put any type of `Value` into `CommonResponse` except `Value::Object`: {value}"
+            ),
+        }
+
         Self { ..self }
     }
 

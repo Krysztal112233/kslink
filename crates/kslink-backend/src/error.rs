@@ -38,3 +38,9 @@ impl From<Error> for u16 {
         code.code
     }
 }
+
+impl From<serde_json::Error> for Error {
+    fn from(value: serde_json::Error) -> Self {
+        Self::Internal(value.to_string())
+    }
+}

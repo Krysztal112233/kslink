@@ -3,7 +3,7 @@ use entity::{
     model::{prelude::*, url_mapping},
 };
 use rocket::{
-    delete, get, http::Status, options, post, response::Redirect, serde::json::Json, tokio, State,
+    State, delete, get, http::Status, options, post, response::Redirect, serde::json::Json, tokio,
 };
 use sea_orm::{ConnectionTrait, DatabaseConnection};
 use tracing::instrument;

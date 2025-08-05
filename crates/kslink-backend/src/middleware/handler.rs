@@ -1,4 +1,4 @@
-use rocket::{catch, http::Status, Request};
+use rocket::{Request, catch, http::Status};
 use serde_json::Value;
 use tracing::instrument;
 
