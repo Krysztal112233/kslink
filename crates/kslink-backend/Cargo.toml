@@ -23,5 +23,6 @@ tracing-subscriber.workspace = true
 tracing.workspace = true
 url.workspace = true
 
-kslink-config.workspace = true
 entity.workspace = true
+kslink-config.workspace = true
+migration.workspace = true

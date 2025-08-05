@@ -2,6 +2,8 @@ use std::time::Duration;
 
 use deadpool::Runtime;
 use kslink_config::{DatabaseConfig, KSLinkConfig, RedisConfig};
+use log::warn;
+use migration::{Migrator, MigratorTrait};
 use mimalloc::MiMalloc;
 use rocket::{catchers, launch, routes, Rocket};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
@@ -26,7 +28,10 @@ async fn rocket() -> _ {
 
     let config = KSLinkConfig::get_figment();
     let kslink_config: KSLinkConfig = config.extract().unwrap();
-    let database = setup_database(&kslink_config.database).await.unwrap();
+    let database = setup_database(&kslink_config.database)
+        .await
+        .or(setup_inmemory_database(&kslink_config.database).await)
+        .unwrap();
     let redis = setup_redis(&kslink_config.redis).await.unwrap();
 
     Rocket::custom(config)
@@ -61,4 +66,21 @@ async fn setup_redis(config: &RedisConfig) -> anyhow::Result<RedisPool> {
     pool.pool = Some(config.deadpool);
 
     Ok(pool.create_pool(Some(Runtime::Tokio1))?)
+}
+
+async fn setup_inmemory_database(config: &DatabaseConfig) -> Result<DatabaseConnection, Error> {
+    warn!(
+        "!!!=== CANNOTE CONNECTED TO THE DATABASE, KSLINK WILL USE INMEMORY SQLITE INSTEAD ===!!!"
+    );
+
+    let mut opt = ConnectOptions::new("sqlite://:memory:?journal_mode=WAL");
+    opt.min_connections(config.min_connections)
+        .max_connections(config.max_connections)
+        .connect_timeout(Duration::from_secs(config.connect_timeout));
+
+    let db = Database::connect(opt).await?;
+
+    Migrator::up(&db, None).await?;
+
+    Ok(db)
 }

@@ -2244,6 +2244,7 @@ dependencies = [
  "entity",
  "kslink-config",
  "log",
+ "migration",
  "mimalloc",
  "moka",
  "once_cell",
