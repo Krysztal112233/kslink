@@ -15,7 +15,10 @@ WORKDIR /app
 COPY --from=builder /builder/target/release/kslink-backend /app/
 CMD [ "./kslink-backend" ]
 
-FROM builder AS frontend-builder
+FROM docker.io/library/rust:slim-trixie AS frontend-builder
+WORKDIR /builder
+RUN apt update && apt install build-essential curl wget file libssl-dev pkg-config -y
+COPY . .
 ARG KSLINK_BASE_URL
 ENV KSLINK_BASE_URL=${KSLINK_BASE_URL}
 RUN (curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh  | bash) && cargo binstall dioxus-cli@0.7.0-alpha.3 --force
