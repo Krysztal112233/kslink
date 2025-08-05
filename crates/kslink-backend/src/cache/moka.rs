@@ -1,4 +1,7 @@
-use std::ops::{Deref, DerefMut};
+use std::{
+    ops::{Deref, DerefMut},
+    time::Duration,
+};
 
 use moka::future::Cache;
 use once_cell::sync::Lazy;
@@ -8,7 +11,11 @@ use crate::cache::KVCache;
 
 pub struct MokaCache(moka::future::Cache<String, String>);
 
-static MOKA: Lazy<Cache<String, String>> = Lazy::new(|| Cache::builder().build());
+static MOKA: Lazy<Cache<String, String>> = Lazy::new(|| {
+    Cache::builder()
+        .time_to_idle(Duration::from_secs(5))
+        .build()
+});
 
 impl MokaCache {
     pub fn new() -> Self {
