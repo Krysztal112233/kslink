@@ -34,11 +34,11 @@ pub async fn post_with_json(
 #[post("/?<url>", rank = 0)]
 #[instrument]
 pub async fn post_with_query(
-    url: String,
+    url: &str,
     db: &State<DatabaseConnection>,
     cache: CacheImpl,
 ) -> CommonResponse {
-    match Url::parse(&url).map_err(Error::from) {
+    match Url::parse(url).map_err(Error::from) {
         Ok(url) => get_or_create_url(CreateRequest { url }, db.inner(), cache).await,
         Err(err) => err.into(),
     }
@@ -47,15 +47,15 @@ pub async fn post_with_query(
 #[get("/<hash>", rank = 0)]
 #[instrument]
 pub async fn get_link(
-    hash: String,
+    hash: &str,
     db: &State<DatabaseConnection>,
     mut cache: CacheImpl,
 ) -> Either<Redirect, CommonResponse> {
     let result = cache
-        .get_by_hash(hash.clone())
+        .get_by_hash(hash.to_owned())
         .await
         .ok_or(Error::Internal("".to_string()))
-        .or(UrlMapping::get_by_hash(hash.clone(), db.inner())
+        .or(UrlMapping::get_by_hash(hash, db.inner())
             .await
             .inspect(|model| {
                 let model = model.clone();
@@ -75,14 +75,14 @@ pub async fn get_link(
 #[allow(unused)]
 #[delete("/<hash>", rank = 1)]
 #[instrument]
-pub async fn delete_link(hash: String) {
+pub async fn delete_link(hash: &str) {
     todo!()
 }
 
 #[allow(unused)]
 #[get("/<hash>/info")]
 #[instrument]
-pub async fn get_link_status(hash: String) {
+pub async fn get_link_status(hash: &str) {
     todo!()
 }
 
