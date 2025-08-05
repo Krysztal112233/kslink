@@ -3,7 +3,9 @@ use std::{convert::Infallible, fmt::Debug};
 
 use deadpool::managed::Pool;
 use deadpool_redis::{Connection, Manager};
+use entity::helper::url_mapping::Statistics;
 use kslink_config::KSLinkConfig;
+use log::warn;
 use rocket::{
     async_trait,
     request::{FromRequest, Outcome},
@@ -21,17 +23,23 @@ pub type RedisPool = Pool<Manager, Connection>;
 #[allow(unused)]
 #[async_trait]
 pub trait KVCache: Sync + Send {
-    async fn put(&mut self, key: String, value: String);
+    async fn put(&mut self, key: &str, value: &str);
 
-    async fn get(&mut self, key: String) -> Option<String>;
+    async fn get(&mut self, key: &str) -> Option<String>;
 
-    async fn get_by_hash(&mut self, hash: String) -> Option<String> {
-        self.get(format!("kslink.hash.{hash}")).await
+    async fn get_by_hash(&mut self, hash: &str) -> Option<String> {
+        self.get(&format!("kslink.hash.{hash}")).await
     }
 
-    async fn write(&mut self, hash: String, url: String) {
-        self.put(format!("kslink.hash.{hash}"), url.to_string())
-            .await;
+    async fn write(&mut self, hash: &str, url: &str) {
+        self.put(&format!("kslink.hash.{hash}"), url).await;
+    }
+
+    async fn get_statistics(&mut self) -> Option<Statistics> {
+        let statistics = self.get("kslink.statistics").await?;
+        serde_json::from_str(&statistics)
+            .inspect_err(|err| warn!("cannot deserializing cache of `kslink.statistics`: {err}"))
+            .ok()
     }
 }
 

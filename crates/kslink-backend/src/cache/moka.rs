@@ -18,11 +18,11 @@ impl MokaCache {
 
 #[async_trait]
 impl KVCache for MokaCache {
-    async fn put(&mut self, key: String, value: String) {
+    async fn put(&mut self, key: &str, value: &str) {
         self.0.insert(key.to_string(), value.to_string()).await;
     }
 
-    async fn get(&mut self, key: String) -> Option<String> {
+    async fn get(&mut self, key: &str) -> Option<String> {
         self.0.get(&key.to_string()).await
     }
 }

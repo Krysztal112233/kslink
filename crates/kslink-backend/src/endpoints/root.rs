@@ -52,7 +52,7 @@ pub async fn get_link(
     mut cache: CacheImpl,
 ) -> Either<Redirect, CommonResponse> {
     let result = cache
-        .get_by_hash(hash.to_owned())
+        .get_by_hash(hash)
         .await
         .ok_or(Error::Internal("".to_string()))
         .or(UrlMapping::get_by_hash(hash, db.inner())
@@ -60,7 +60,7 @@ pub async fn get_link(
             .inspect(|model| {
                 let model = model.clone();
                 tokio::spawn(async move {
-                    cache.write(model.hash, model.dest).await;
+                    cache.write(&model.hash, &model.dest).await;
                 });
             })
             .map_err(Error::from)
@@ -105,7 +105,7 @@ where
     match get_or_create(c, db).await.inspect(|model| {
         let model = model.clone();
         tokio::spawn(async move {
-            cache.write(model.hash, model.dest).await;
+            cache.write(&model.hash, &model.dest).await;
         });
     }) {
         Ok(model) => CommonResponse::new(Status::Ok.code)
