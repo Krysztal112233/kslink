@@ -38,8 +38,9 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
-enum UrlMappingTable {
+pub enum UrlMappingTable {
     UrlMapping,
+
     Hash,
     Dest,
 }
