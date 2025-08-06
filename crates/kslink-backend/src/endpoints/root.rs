@@ -3,7 +3,7 @@ use entity::{
     model::{prelude::*, url_mapping},
 };
 use rocket::{
-    State, delete, get, http::Status, options, post, response::Redirect, serde::json::Json, tokio,
+    delete, get, http::Status, options, post, response::Redirect, serde::json::Json, tokio, State,
 };
 use sea_orm::{ConnectionTrait, DatabaseConnection};
 use tracing::instrument;
@@ -11,10 +11,12 @@ use url::Url;
 
 use crate::{
     cache::CacheImpl,
-    common::{hasher::ShortHash, response::Either},
-};
-use crate::{
-    common::{request::CreateRequest, response::CommonResponse},
+    common::{
+        guard,
+        hasher::ShortHash,
+        request::CreateRequest,
+        response::{CommonResponse, Either},
+    },
     error::Error,
 };
 
@@ -50,6 +52,8 @@ pub async fn get_link(
     hash: &str,
     db: &State<DatabaseConnection>,
     mut cache: CacheImpl,
+
+    _visit: guard::VisitRecorder,
 ) -> Either<Redirect, CommonResponse> {
     let result = cache
         .get_by_hash(hash)

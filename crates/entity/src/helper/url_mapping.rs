@@ -1,17 +1,10 @@
 use async_trait::async_trait;
-use sea_orm::{ActiveModelTrait, ActiveValue::*, ConnectionTrait, EntityTrait, prelude::*};
-use serde::{Deserialize, Serialize};
+use sea_orm::{prelude::*, ActiveModelTrait, ActiveValue::*, ConnectionTrait, EntityTrait};
 
 use crate::{
     model::prelude::UrlMapping,
     model::url_mapping::{self},
 };
-
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct Statistics {
-    pub count: u64,
-    pub visit: u64,
-}
 
 #[async_trait]
 pub trait UrlMappingHelper {
@@ -52,16 +45,11 @@ pub trait UrlMappingHelper {
             .ok_or(DbErr::RecordNotFound(dest.as_ref().to_string()))
     }
 
-    async fn get_statistics<C>(db: &C) -> Result<Statistics, DbErr>
+    async fn get_count<C>(db: &C) -> Result<u64, DbErr>
     where
         C: ConnectionTrait,
     {
-        let count = UrlMapping::find().count(db).await?;
-
-        Ok(Statistics {
-            count,
-            ..Default::default()
-        })
+        Ok(UrlMapping::find().count(db).await?)
     }
 }
 

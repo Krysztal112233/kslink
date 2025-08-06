@@ -1,20 +1,27 @@
-use std::ops::{Deref, DerefMut};
-use std::{convert::Infallible, fmt::Debug};
+use std::{
+    convert::Infallible,
+    fmt::Debug,
+    ops::{Deref, DerefMut},
+};
 
 use deadpool::managed::Pool;
 use deadpool_redis::{Connection, Manager};
-use entity::helper::url_mapping::{Statistics, UrlMappingHelper};
-use entity::model::prelude::*;
+use entity::{
+    helper::{url_mapping::UrlMappingHelper, visitor::VisitRecordHelper, Statistics},
+    model::prelude::*,
+};
 use kslink_config::KSLinkConfig;
 use rocket::{
-    Request, async_trait,
+    async_trait,
     request::{FromRequest, Outcome},
+    Request,
 };
 use sea_orm::DatabaseConnection;
 
-use crate::cache::moka::MokaCache;
-use crate::cache::redis::RedisCache;
-use crate::error::Error;
+use crate::{
+    cache::{moka::MokaCache, redis::RedisCache},
+    error::Error,
+};
 
 pub mod moka;
 pub mod redis;
@@ -39,8 +46,18 @@ pub trait KVCache: Sync + Send {
     async fn get_statistics(&mut self, db: &DatabaseConnection) -> Result<Statistics, Error> {
         self.get("kslink.statistics")
             .await
-            .map(|data| serde_json::from_str::<Statistics>(&data).map_err(Error::from))
-            .unwrap_or(UrlMapping::get_statistics(db).await.map_err(Error::from))
+            .map(|data| serde_json::from_str::<Statistics>(&data).map_err(Error::from));
+
+        let count = UrlMapping::get_count(db).await;
+        let visit = VisitRecord::get_count(db).await;
+
+        let result = if let (Ok(count), Ok(visit)) = (count, visit) {
+            Statistics { count, visit }
+        } else {
+            Statistics::default()
+        };
+
+        Ok(result)
     }
 }
 

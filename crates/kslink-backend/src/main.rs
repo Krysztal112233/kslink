@@ -3,12 +3,20 @@ use std::time::Duration;
 use deadpool::Runtime;
 use kslink_config::{DatabaseConfig, KSLinkConfig, RedisConfig};
 use mimalloc::MiMalloc;
-use rocket::{catchers, launch, routes, Rocket};
+use rocket::{
+    catchers,
+    fairing::AdHoc,
+    launch, routes,
+    tokio::{self, sync::mpsc},
+    Rocket,
+};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use snowflake_ng::SnowflakeGenerator;
 use tracing::level_filters::LevelFilter;
 
 use crate::{
     cache::RedisPool,
+    common::fairing::{Cors, VisitQueueConsumer},
     endpoints::{root, statistics},
     error::Error,
     middleware::handler,
@@ -34,12 +42,21 @@ async fn rocket() -> _ {
     let database = setup_database(&kslink_config.database).await.unwrap();
     let redis = setup_redis(&kslink_config.redis).await.unwrap();
 
+    let ((tx, rx), c_db) = (mpsc::unbounded_channel(), database.clone());
+
     Rocket::custom(config)
         .register("/", catchers![handler::default])
-        .attach(common::fairing::Cors)
+        .attach(Cors)
+        .attach(AdHoc::on_liftoff("Visit Record Consumer", |r| {
+            Box::pin(async move {
+                tokio::spawn(VisitQueueConsumer::run(c_db, rx, r.shutdown()));
+            })
+        }))
         .manage(database)
         .manage(redis)
         .manage(kslink_config)
+        .manage(tx)
+        .manage(SnowflakeGenerator::default())
         .mount(
             "/",
             routes![

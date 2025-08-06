@@ -1,6 +1,6 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
-use crate::m20220101_000001_create_table::UrlMappingTable;
+use crate::m20220101_000001_create_mapping_table::UrlMappingTable;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -13,7 +13,7 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(VisitRecordTable::VisitRecord)
                     .if_not_exists()
-                    .col(uuid_uniq(VisitRecordTable::Id).primary_key())
+                    .col(big_integer(VisitRecordTable::Id).primary_key())
                     .col(string(VisitRecordTable::UserAgent))
                     .col(string(VisitRecordTable::RefHash))
                     .to_owned(),
