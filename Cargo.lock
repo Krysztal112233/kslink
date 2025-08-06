@@ -423,9 +423,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.5.42"
+version = "4.5.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed87a9d530bb41a67537289bafcac159cb3ee28460e0a4571123d2a778a6a882"
+checksum = "50fd97c9dc2399518aa331917ac6f274280ec5eb34e555dd291899745c48ec6f"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -433,9 +433,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.5.42"
+version = "4.5.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64f4f3f3c77c94aff3c7e9aac9a2ca1974a5adf392a8bb751e827d6d127ab966"
+checksum = "c35b5830294e1fa0462034af85cc95225a4cb07092c088c55bda3147cfcd8f65"
 dependencies = [
  "anstream",
  "anstyle",
@@ -2244,7 +2244,6 @@ name = "kslink-backend"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "crossbeam-queue",
  "deadpool",
  "deadpool-redis",
  "educe",
@@ -2257,7 +2256,6 @@ dependencies = [
  "once_cell",
  "radix_fmt_ng",
  "rocket",
- "rocket_cors",
  "sea-orm",
  "serde",
  "serde_json",
@@ -3368,23 +3366,6 @@ dependencies = [
  "syn 2.0.104",
  "unicode-xid",
  "version_check",
-]
-
-[[package]]
-name = "rocket_cors"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cfac3a1df83f8d4fc96aa41dba3b86c786417b7fc0f52ec76295df2ba781aa69"
-dependencies = [
- "http 0.2.12",
- "log",
- "regex",
- "rocket",
- "serde",
- "serde_derive",
- "unicase",
- "unicase_serde",
- "url",
 ]
 
 [[package]]
@@ -4911,22 +4892,6 @@ checksum = "e1b88fcfe09e89d3866a5c11019378088af2d24c3fbd4f0543f96b479ec90697"
 dependencies = [
  "serde",
  "version_check",
-]
-
-[[package]]
-name = "unicase"
-version = "2.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "75b844d17643ee918803943289730bec8aac480150456169e647ed0b576ba539"
-
-[[package]]
-name = "unicase_serde"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ef53697679d874d69f3160af80bc28de12730a985d57bdf2b47456ccb8b11f1"
-dependencies = [
- "serde",
- "unicase",
 ]
 
 [[package]]
