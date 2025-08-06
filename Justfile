@@ -10,6 +10,7 @@ build-container:
     docker compose build
 
 release-backend:
+    just gen-entities
     cargo build -r -p kslink-backend
 
 release-frontend:
@@ -24,6 +25,9 @@ watch-backend:
 
 watch-frontend:
     dx serve -p kslink-frontend --platform web
+
+gen-entities:
+    sea-orm-cli generate entity -o crates/entity/src/model --with-serde both --database-url=postgres://postgres:postgres@localhost/postgres
 
 clean:
     cargo clean
