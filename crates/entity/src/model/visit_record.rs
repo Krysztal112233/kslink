@@ -4,23 +4,29 @@ use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
-#[sea_orm(table_name = "url_mapping")]
+#[sea_orm(table_name = "visit_record")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub hash: String,
-    #[sea_orm(unique)]
-    pub dest: String,
+    pub id: Uuid,
+    pub user_agent: String,
+    pub ref_hash: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::visit_record::Entity")]
-    VisitRecord,
+    #[sea_orm(
+        belongs_to = "super::url_mapping::Entity",
+        from = "Column::RefHash",
+        to = "super::url_mapping::Column::Hash",
+        on_update = "Cascade",
+        on_delete = "Cascade"
+    )]
+    UrlMapping,
 }
 
-impl Related<super::visit_record::Entity> for Entity {
+impl Related<super::url_mapping::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::VisitRecord.def()
+        Relation::UrlMapping.def()
     }
 }
 

@@ -11,11 +11,11 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(VisitorTable::Visitor)
+                    .table(VisitRecordTable::VisitRecord)
                     .if_not_exists()
-                    .col(uuid_uniq(VisitorTable::Id).primary_key())
-                    .col(string(VisitorTable::UserAgent))
-                    .col(string(VisitorTable::RefHash))
+                    .col(uuid_uniq(VisitRecordTable::Id).primary_key())
+                    .col(string(VisitRecordTable::UserAgent))
+                    .col(string(VisitRecordTable::RefHash))
                     .to_owned(),
             )
             .await?;
@@ -24,7 +24,7 @@ impl MigrationTrait for Migration {
             .create_foreign_key(
                 ForeignKey::create()
                     .name("fk_visitor_ref_hash")
-                    .from(VisitorTable::Visitor, VisitorTable::RefHash)
+                    .from(VisitRecordTable::VisitRecord, VisitRecordTable::RefHash)
                     .to(UrlMappingTable::UrlMapping, UrlMappingTable::Hash)
                     .on_delete(ForeignKeyAction::Cascade)
                     .on_update(ForeignKeyAction::Cascade)
@@ -44,8 +44,8 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
-pub enum VisitorTable {
-    Visitor,
+pub enum VisitRecordTable {
+    VisitRecord,
 
     Id,
     UserAgent,
