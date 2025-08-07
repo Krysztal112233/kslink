@@ -1,0 +1,16 @@
+[package]
+name = "kslink-rules"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+async-trait.workspace = true
+im.workspace = true
+log.workspace = true
+rayon.workspace = true
+regex.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+url.workspace = true
