@@ -57,6 +57,10 @@ pub trait KVCache: Sync + Send {
             Statistics::default()
         };
 
+        if let Ok(data) = serde_json::to_string(&result) {
+            self.put("kslink.statistics", &data).await;
+        }
+
         Ok(result)
     }
 }
