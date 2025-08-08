@@ -1,0 +1,17 @@
+type = "trim"
+
+[tests]
+"https://twitter.com/xxxxxxxx/status/xxxxxxxxxxxxxxxxxxx?t=yegTcdac3QX5VXUv54eT6w&s=19" = "https://twitter.com/xxxxxxxx/status/xxxxxxxxxxxxxxxxxxx?"
+"https://x.com/xxxxxxxx/status/xxxxxxxxxxxxxxxxxxx?t=yegTcdac3QX5VXUv54eT6w&s=19" = "https://x.com/xxxxxxxx/status/xxxxxxxxxxxxxxxxxxx?"
+
+[content.'^https?://x\.com(?:/|$)']
+explain = "Matching x.com"
+
+[content.'^https?://x\.com(?:/|$)'.param]
+".*" = "Remove all tracing param"
+
+[content.'^https?://twitter\.com(?:/|$)']
+explain = "Matching twitter.com"
+
+[content.'^https?://twitter\.com(?:/|$)'.param]
+".*" = "All tracing param"

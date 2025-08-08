@@ -6,4 +6,5 @@ pub enum Error {
     Regex(#[from] regex::Error),
 }
 
+#[allow(unused)]
 pub(crate) type Result<T> = ::std::result::Result<T, Error>;

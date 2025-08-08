@@ -1,19 +1,21 @@
-use std::{fmt::Debug, hash::Hash, sync::Arc};
+use std::{fmt::Debug, hash::Hash, ops::Deref, sync::Arc};
 
 use im::HashMap;
+use rayon::iter::{ParallelBridge, ParallelIterator};
 use regex::Regex;
 use url::Url;
 
 use crate::{error::Result, meta::RuleMeta, store::SimpleRuleStore};
 
+pub mod cli;
 pub mod error;
 pub mod meta;
-mod store;
+pub(crate) mod store;
 
 #[derive(Debug, Clone)]
 struct WrappedRegex(Regex);
 
-impl std::ops::Deref for WrappedRegex {
+impl Deref for WrappedRegex {
     type Target = Regex;
 
     fn deref(&self) -> &Self::Target {
@@ -41,7 +43,7 @@ impl PartialEq for WrappedRegex {
     }
 }
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct RuleSet {
     store: HashMap<WrappedRegex, Arc<Box<dyn RuleStore>>>,
 }
@@ -63,10 +65,63 @@ impl RuleSet {
             ),
         }
     }
+
+    pub async fn prune(&self, url: &Url) -> Option<Url> {
+        let (_, rule) = self
+            .store
+            .iter()
+            .par_bridge()
+            .find_first(|(e, _)| e.is_match(url.as_ref()))?;
+        Some(rule.run(url).await)
+    }
+}
+
+impl From<RuleMeta> for RuleSet {
+    fn from(value: RuleMeta) -> Self {
+        Self::default().join(value)
+    }
 }
 
 #[allow(clippy::mutable_key_type)]
 #[async_trait::async_trait]
 pub trait RuleStore: Sync + Send + Debug {
     async fn run(&self, url: &Url) -> Url;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const TEST: &str = r#"
+    type = "trim"
+
+    tests = { "https://live.bilibili.com/?spm_id_from=333.1007.0.0" = "https://live.bilibili.com/?" }
+
+    [content.'^https?://live\.bilibili\.com(?:/|$)']
+    explain = "Matching the live site of bilibili"
+
+    [content.'^https?://live\.bilibili\.com(?:/|$)'.param]
+    launch_id = "Which method user enter this live"
+    live_from = "Detail of method of the user enter this live"
+    session_id = "Tracing"
+    spm_id_from = '"Super Position Model" format'
+
+    [content.'^https?://(?:www\.)?bilibili\.com(?:/|$)']
+    explain = "Matching the main site of bilibili"
+
+    [content.'^https?://(?:www\.)?bilibili\.com(?:/|$)'.param]
+    spm_id_from = '"Super Position Model" format'
+    vd_source = "Share tracing"
+    "#;
+
+    #[tokio::test]
+    async fn test_simple() {
+        let meta = toml::from_str::<RuleMeta>(TEST).unwrap();
+        let rule = RuleSet::from(meta.clone());
+
+        let tests = meta.tests.clone().unwrap();
+        for (input, except) in tests.iter() {
+            assert_eq!(rule.prune(input).await.unwrap(), *except);
+        }
+    }
 }

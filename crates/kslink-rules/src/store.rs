@@ -10,7 +10,7 @@ use crate::{meta::RuleMeta, RuleStore, WrappedRegex};
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
 pub struct SimpleRuleStore {
     explain: Option<String>,
-    param: HashMap<WrappedRegex, String>,
+    param: HashMap<WrappedRegex, Option<String>>,
 }
 
 impl SimpleRuleStore {
