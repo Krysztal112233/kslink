@@ -3,7 +3,7 @@ WORKDIR /builder
 RUN apt update && apt install build-essential curl wget file libssl-dev pkg-config -y
 COPY . .
 RUN cargo fetch --locked
-RUN cargo build --all -r --exclude kslink-frontend
+RUN cargo build --all -r --exclude kslink-frontend --exclude kslink-rules
 
 FROM docker.io/library/debian:trixie-slim AS migration
 WORKDIR /app
