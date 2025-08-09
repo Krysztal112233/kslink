@@ -27,6 +27,7 @@ pub fn UrlInputBox() -> Element {
     let mut url = use_signal(String::new);
     let mut is_working = use_signal(|| false);
     let mut short_url = use_signal(|| None::<String>);
+    let mut trimmed_queries = use_signal(|| None::<usize>);
 
     let is_valid = url.with(|u| common::is_valid_url(u));
     let input_class = format!(
@@ -67,6 +68,7 @@ pub fn UrlInputBox() -> Element {
                     .unwrap();
 
                 short_url.set(Some(format!("{url}",)));
+                trimmed_queries.set(Some(result.trimmed.len()));
             }
         }
 
@@ -81,7 +83,7 @@ pub fn UrlInputBox() -> Element {
                     placeholder: "https://...",
                     oninput: on_input,
                     value: "{url}",
-                },
+                }
                 button {
                     class: btn_class,
                     onclick: on_submit,
@@ -95,7 +97,7 @@ pub fn UrlInputBox() -> Element {
             }
 
             if let Some(url) = short_url() {
-                div { class: "alert alert-success mt-4",
+                div { class: "alert alert-outline alert-info mt-4", "role" : "alert",
                     svg {
                         xmlns: "http://www.w3.org/2000/svg",
                         class: "stroke-current shrink-0 h-6 w-6",
@@ -105,16 +107,36 @@ pub fn UrlInputBox() -> Element {
                             stroke_linecap: "round",
                             stroke_linejoin: "round",
                             stroke_width: "2",
-                            d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
                         }
                     }
-                    span { "Your short URL is: "
+                    span {
+                        "Your short URL is: "
                         a {
                             href: "{url}",
                             target: "_blank",
                             class: "link link-hover",
                             "{url}"
                         }
+                    }
+                }
+
+                div { class: "alert alert-outline alert-info mt-4", "role" : "alert",
+                    svg {
+                        class: "size-6",
+                        fill: "none",
+                        stroke: "currentColor",
+                        stroke_width: "1.5",
+                        view_box: "0 0 24 24",
+                        xmlns: "http://www.w3.org/2000/svg",
+                        path {
+                            d: "m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z",
+                            stroke_linecap: "round",
+                            stroke_linejoin: "round",
+                        }
+                    }
+                    if let Some(result) = trimmed_queries() {
+                        span { "About {result} tracing queries has been removed." }
                     }
                 }
             }

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use dioxus_logger::tracing::error;
 use reqwest::Client;
 use serde::Deserialize;
@@ -22,6 +24,7 @@ pub struct Statistics {
 #[derive(Debug, Default, Deserialize)]
 pub struct MakeHash {
     pub hash: String,
+    pub trimmed: HashMap<String, String>,
 }
 
 #[allow(unused)]
