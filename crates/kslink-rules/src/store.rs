@@ -5,7 +5,7 @@ use log::error;
 use rayon::prelude::*;
 use url::Url;
 
-use crate::{meta::RuleMeta, RuleStore, WrappedRegex};
+use crate::{meta::RuleMeta, PrunedUrl, RuleStore, WrappedRegex};
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
 pub struct SimpleRuleStore {
@@ -49,7 +49,7 @@ impl SimpleRuleStore {
 
 #[async_trait::async_trait]
 impl RuleStore for SimpleRuleStore {
-    async fn run(&self, url: &Url) -> Url {
+    async fn run(&self, url: &Url) -> PrunedUrl {
         let banned = url
             .query_pairs()
             .filter_map(|(k, _)| {
@@ -70,6 +70,11 @@ impl RuleStore for SimpleRuleStore {
             .collect();
         new_url.query_pairs_mut().clear().extend_pairs(&kept);
 
-        new_url
+        banned
+            .iter()
+            .map(|param| (url.query_pairs().find(|(e, _)| e == param).unwrap().clone()))
+            .fold(PrunedUrl::new(new_url.clone()), |acc, (k, v)| {
+                acc.append(k.clone().to_string(), v.clone().to_string())
+            })
     }
 }

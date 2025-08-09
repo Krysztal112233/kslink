@@ -66,7 +66,7 @@ impl RuleSet {
         }
     }
 
-    pub async fn prune(&self, url: &Url) -> Option<Url> {
+    pub async fn prune(&self, url: &Url) -> Option<PrunedUrl> {
         let (_, rule) = self
             .store
             .iter()
@@ -90,10 +90,31 @@ impl From<RuleMeta> for RuleSet {
     }
 }
 
-#[allow(clippy::mutable_key_type)]
+#[derive(Debug)]
+pub struct PrunedUrl {
+    pub url: Url,
+    pub removed: HashMap<String, String>,
+}
+
+impl PrunedUrl {
+    pub fn new(url: Url) -> Self {
+        Self {
+            url,
+            removed: HashMap::default(),
+        }
+    }
+
+    pub fn append(self, param: String, data: String) -> Self {
+        Self {
+            removed: self.removed.update(param, data),
+            ..self
+        }
+    }
+}
+
 #[async_trait::async_trait]
 pub trait RuleStore: Sync + Send + Debug {
-    async fn run(&self, url: &Url) -> Url;
+    async fn run(&self, url: &Url) -> PrunedUrl;
 }
 
 #[cfg(test)]
@@ -129,7 +150,7 @@ mod tests {
 
         let tests = meta.tests.clone().unwrap();
         for (input, except) in tests.iter() {
-            assert_eq!(rule.prune(input).await.unwrap(), *except);
+            assert_eq!(rule.prune(input).await.unwrap().url, *except);
         }
     }
 }

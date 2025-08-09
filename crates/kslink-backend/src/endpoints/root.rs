@@ -2,7 +2,7 @@ use entity::{
     helper::url_mapping::UrlMappingHelper,
     model::{prelude::*, url_mapping},
 };
-use kslink_rules::RuleSet;
+use kslink_rules::{PrunedUrl, RuleSet};
 use rocket::{
     delete, get, http::Status, options, post, response::Redirect, serde::json::Json, tokio, State,
 };
@@ -115,7 +115,11 @@ where
     C: ConnectionTrait,
 {
     let c = CreateRequest {
-        url: ruleset.prune(&c.url).await.unwrap_or(c.url.clone()),
+        url: ruleset
+            .prune(&c.url)
+            .await
+            .unwrap_or(PrunedUrl::new(c.url.clone()))
+            .url,
     };
 
     match get_or_create(c, db).await.inspect(|model| {

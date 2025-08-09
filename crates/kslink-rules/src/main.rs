@@ -165,11 +165,11 @@ async fn check(cmd: CheckCmd) -> anyhow::Result<()> {
                 continue;
             };
 
-            if output == *except {
+            if output.url == *except {
                 succeed += 1;
-                info!("[PASS]: {except} == {output}")
+                info!("[PASS]: {except} == {}", output.url)
             } else {
-                warn!("[FAIL]: {except} == {output}")
+                warn!("[FAIL]: {except} == {}", output.url)
             }
         }
     }
