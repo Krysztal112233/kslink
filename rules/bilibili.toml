@@ -7,14 +7,10 @@ type = "trim"
 explain = "Matching the live site of bilibili"
 
 [content.'^https?://live\.bilibili\.com(?:/|$)'.param]
-launch_id = "Which method user enter this live"
-live_from = "Detail of method of the user enter this live"
-session_id = "Tracing"
-spm_id_from = '"Super Position Model" format'
+".*" = "Remove all tracing param"
 
 [content.'^https?://(?:www\.)?bilibili\.com(?:/|$)']
 explain = "Matching the main site of bilibili"
 
 [content.'^https?://(?:www\.)?bilibili\.com(?:/|$)'.param]
-spm_id_from = '"Super Position Model" format'
-vd_source = "Share tracing"
+".*" = "Remove all tracing param"
