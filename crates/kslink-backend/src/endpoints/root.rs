@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use entity::{
     helper::url_mapping::UrlMappingHelper,
     model::{prelude::*, url_mapping},
@@ -93,13 +95,21 @@ pub async fn get_link_status(hash: &str) {
     todo!()
 }
 
-async fn get_or_create<C>(c: CreateRequest, db: &C) -> Result<url_mapping::Model, Error>
+async fn get_or_create<C>(c: &PrunedUrl, db: &C) -> Result<url_mapping::Model, Error>
 where
     C: ConnectionTrait,
 {
     let result = match UrlMapping::get_by_desc(c.url.clone(), db).await {
         Ok(model) => model,
-        Err(_) => UrlMapping::create_short(c.url.clone().into_short_hash(), c.url, db).await?,
+        Err(_) => {
+            UrlMapping::create_short_with_trimmed(
+                c.url.clone().into_short_hash(),
+                c.url.clone(),
+                &(c.removed.clone().into_iter().collect::<HashMap<_, _>>()),
+                db,
+            )
+            .await?
+        }
     };
 
     Ok(result)
@@ -114,22 +124,20 @@ async fn get_or_create_url<C>(
 where
     C: ConnectionTrait,
 {
-    let c = CreateRequest {
-        url: ruleset
-            .prune(&c.url)
-            .await
-            .unwrap_or(PrunedUrl::new(c.url.clone()))
-            .url,
-    };
+    let c = ruleset
+        .prune(&c.url)
+        .await
+        .unwrap_or(PrunedUrl::new(c.url.clone()));
 
-    match get_or_create(c, db).await.inspect(|model| {
+    match get_or_create(&c, db).await.inspect(|model| {
         let model = model.clone();
         tokio::spawn(async move {
             cache.write(&model.hash, &model.dest).await;
         });
     }) {
         Ok(model) => CommonResponse::new(Status::Ok.code)
-            .append("hash", serde_json::Value::String(model.hash)),
+            .append("hash", serde_json::Value::String(model.hash))
+            .append("trimmed", model.trimmed),
         Err(err) => err.into(),
     }
 }

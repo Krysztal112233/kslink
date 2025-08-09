@@ -1,5 +1,8 @@
+use std::{collections::HashMap, ops::Deref};
+
 use async_trait::async_trait;
 use sea_orm::{prelude::*, ActiveModelTrait, ActiveValue::*, ConnectionTrait, EntityTrait};
+use serde::Serialize;
 use serde_json::json;
 
 use crate::{
@@ -15,10 +18,29 @@ pub trait UrlMappingHelper {
         A0: AsRef<str> + Send,
         A1: AsRef<str> + Send,
     {
+        Self::create_short_with_trimmed(hash, des, &HashMap::default(), db).await
+    }
+
+    async fn create_short_with_trimmed<C, A0, A1, S>(
+        hash: A0,
+        des: A1,
+        trimmed: S,
+        db: &C,
+    ) -> Result<url_mapping::Model, DbErr>
+    where
+        C: ConnectionTrait,
+        A0: AsRef<str> + Send,
+        A1: AsRef<str> + Send,
+        S: Deref<Target = HashMap<String, String>> + Serialize + Send,
+    {
+        let trimmed = serde_json::to_value(trimmed)
+            .map(|it| if it.is_object() { it } else { json!({}) })
+            .unwrap_or(json!({}));
+
         Ok(url_mapping::ActiveModel {
             hash: Set(hash.as_ref().to_string()),
             dest: Set(des.as_ref().to_string()),
-            trimmed: Set(json!({})),
+            trimmed: Set(trimmed),
         }
         .insert(db)
         .await?)
