@@ -2,6 +2,7 @@ use entity::{
     helper::url_mapping::UrlMappingHelper,
     model::{prelude::*, url_mapping},
 };
+use kslink_rules::RuleSet;
 use rocket::{
     delete, get, http::Status, options, post, response::Redirect, serde::json::Json, tokio, State,
 };
@@ -29,8 +30,9 @@ pub async fn post_with_json(
     form: Json<CreateRequest>,
     db: &State<DatabaseConnection>,
     cache: CacheImpl,
+    ruleset: &State<RuleSet>,
 ) -> CommonResponse {
-    get_or_create_url(form.0, db.inner(), cache).await
+    get_or_create_url(form.0, db.inner(), cache, ruleset).await
 }
 
 #[post("/?<url>", rank = 0)]
@@ -39,9 +41,10 @@ pub async fn post_with_query(
     url: &str,
     db: &State<DatabaseConnection>,
     cache: CacheImpl,
+    ruleset: &State<RuleSet>,
 ) -> CommonResponse {
     match Url::parse(url).map_err(Error::from) {
-        Ok(url) => get_or_create_url(CreateRequest { url }, db.inner(), cache).await,
+        Ok(url) => get_or_create_url(CreateRequest { url }, db.inner(), cache, ruleset).await,
         Err(err) => err.into(),
     }
 }
@@ -102,10 +105,19 @@ where
     Ok(result)
 }
 
-async fn get_or_create_url<C>(c: CreateRequest, db: &C, mut cache: CacheImpl) -> CommonResponse
+async fn get_or_create_url<C>(
+    c: CreateRequest,
+    db: &C,
+    mut cache: CacheImpl,
+    ruleset: &RuleSet,
+) -> CommonResponse
 where
     C: ConnectionTrait,
 {
+    let c = CreateRequest {
+        url: ruleset.prune(&c.url).await.unwrap_or(c.url.clone()),
+    };
+
     match get_or_create(c, db).await.inspect(|model| {
         let model = model.clone();
         tokio::spawn(async move {

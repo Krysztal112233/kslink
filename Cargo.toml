@@ -47,8 +47,9 @@ url = { version = "2.5", features = ["serde"] }
 walkdir = "2"
 
 entity = { path = "crates/entity" }
-kslink-config = { path = "crates/kslink-config" }
 kslink-backend = { path = "crates/kslink-backend" }
+kslink-config = { path = "crates/kslink-config" }
+kslink-rules = { path = "crates/kslink-rules" }
 migration = { path = "crates/migration" }
 
 [workspace.dependencies.figment]

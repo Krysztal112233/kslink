@@ -1,7 +1,7 @@
 use educe::Educe;
 use figment::{
-    Figment, Profile,
     providers::{Env, Format, Serialized, Toml},
+    Figment, Profile,
 };
 use serde::{Deserialize, Serialize};
 
@@ -15,6 +15,9 @@ pub struct KSLinkConfig {
 
     #[serde(default, flatten)]
     pub cache: CacheConfig,
+
+    #[serde(default, flatten)]
+    pub rule: RuleConfig,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Educe)]
@@ -48,6 +51,13 @@ pub struct RedisConfig {
 pub struct CacheConfig {
     #[educe(Default = 60)]
     pub expire: u64,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Educe)]
+#[educe(Default)]
+pub struct RuleConfig {
+    #[educe(Default = "./rules")]
+    pub rule_path: String,
 }
 
 impl KSLinkConfig {

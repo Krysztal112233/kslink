@@ -1,7 +1,9 @@
-use std::time::Duration;
+use std::{fs::File, io::Read, time::Duration};
 
 use deadpool::Runtime;
-use kslink_config::{DatabaseConfig, KSLinkConfig, RedisConfig};
+use kslink_config::{DatabaseConfig, KSLinkConfig, RedisConfig, RuleConfig};
+use kslink_rules::RuleSet;
+use log::{info, warn};
 use mimalloc::MiMalloc;
 use rocket::{
     catchers,
@@ -13,6 +15,7 @@ use rocket::{
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use snowflake_ng::SnowflakeGenerator;
 use tracing::level_filters::LevelFilter;
+use walkdir::WalkDir;
 
 use crate::{
     cache::RedisPool,
@@ -41,6 +44,7 @@ async fn rocket() -> _ {
     let kslink_config: KSLinkConfig = config.extract().unwrap();
     let database = setup_database(&kslink_config.database).await.unwrap();
     let redis = setup_redis(&kslink_config.redis).await.unwrap();
+    let ruleset = setup_rules(&kslink_config.rule).await;
 
     let ((tx, rx), c_db) = (mpsc::unbounded_channel(), database.clone());
 
@@ -56,6 +60,7 @@ async fn rocket() -> _ {
         .manage(redis)
         .manage(kslink_config)
         .manage(tx)
+        .manage(ruleset)
         .manage(SnowflakeGenerator::default())
         .mount(
             "/",
@@ -84,4 +89,26 @@ async fn setup_redis(config: &RedisConfig) -> anyhow::Result<RedisPool> {
     pool.pool = Some(config.deadpool);
 
     Ok(pool.create_pool(Some(Runtime::Tokio1))?)
+}
+
+async fn setup_rules(config: &RuleConfig) -> RuleSet {
+    WalkDir::new(&config.rule_path)
+        .into_iter()
+        .filter_map(Result::ok)
+        .filter(|e| e.file_type().is_file())
+        .inspect(|e| info!("loading rule file `{}`", e.path().display()))
+        .map(|e| e.into_path())
+        .flat_map(|e| {
+            File::open(e)
+                .inspect_err(|err| warn!("failed to open `{err}`"))
+                .ok()
+        })
+        .map(|mut file| {
+            let mut buf = String::with_capacity(1024);
+            let _ = file
+                .read_to_string(&mut buf)
+                .inspect_err(|err| warn!("failed to reading file: {err}"));
+            buf
+        })
+        .fold(RuleSet::default(), |acc, c| acc.load(&c))
 }

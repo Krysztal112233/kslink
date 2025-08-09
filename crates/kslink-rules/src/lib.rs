@@ -74,6 +74,14 @@ impl RuleSet {
             .find_first(|(e, _)| e.is_match(url.as_ref()))?;
         Some(rule.run(url).await)
     }
+
+    pub fn load(self, rule: &str) -> Self {
+        let Ok(meta) = toml::from_str(rule) else {
+            return self;
+        };
+
+        self.join(meta)
+    }
 }
 
 impl From<RuleMeta> for RuleSet {

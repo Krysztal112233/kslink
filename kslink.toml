@@ -1,6 +1,7 @@
 [default]
 address = "0.0.0.0"
 port = 8000
+rule_path = "./rules"
 workers = 32
 
 [default.database]
