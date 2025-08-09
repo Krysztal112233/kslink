@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use sea_orm::{prelude::*, ActiveModelTrait, ActiveValue::*, ConnectionTrait, EntityTrait};
+use serde_json::json;
 
 use crate::{
     model::prelude::UrlMapping,
@@ -17,6 +18,7 @@ pub trait UrlMappingHelper {
         Ok(url_mapping::ActiveModel {
             hash: Set(hash.as_ref().to_string()),
             dest: Set(des.as_ref().to_string()),
+            trimmed: Set(json!({})),
         }
         .insert(db)
         .await?)

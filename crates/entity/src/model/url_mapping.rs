@@ -10,6 +10,8 @@ pub struct Model {
     pub hash: String,
     #[sea_orm(unique)]
     pub dest: String,
+    #[sea_orm(column_type = "JsonBinary")]
+    pub trimmed: Json,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -1,5 +1,5 @@
+use log::{error, info};
 use sea_orm::{ConnectionTrait, DbErr, EntityTrait, PaginatorTrait};
-use tracing::{error, info};
 
 use crate::model::{prelude::*, visit_record::ActiveModel};
 

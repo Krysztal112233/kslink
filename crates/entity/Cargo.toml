@@ -5,12 +5,8 @@ edition.workspace = true
 
 [dependencies]
 async-trait.workspace = true
-deadpool-redis.workspace = true
-deadpool.workspace = true
-rocket.workspace = true
 sea-orm.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 thiserror.workspace = true
-tracing.workspace = true
-
-kslink-config.workspace = true
+log.workspace = true

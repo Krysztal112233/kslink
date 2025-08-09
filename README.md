@@ -31,13 +31,3 @@ Choose `build`, or directly run `just build`
 ## Configuration
 
 Please see `kslink.toml` file for more detail
-
-### Database
-
-This project also support SQLite but I've nerver tested it.
-
-Just replace `database.url` in the `kslink.toml` file into `sqlite://app.db?journal_mode=WAL&cache=shared`, in the docker the SQLite database file will be stored at `/app/app.db`
-
-### Redis
-
-This project also support Redis, but if Redis unavaliable it will fallback to in memory cache called `Moka`, so if you doesn't need Redis or wanna keep you deployment stack clean you can run it without Redis.
