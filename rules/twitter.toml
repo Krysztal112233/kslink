@@ -7,11 +7,11 @@ type = "trim"
 [content.'^https?://x\.com(?:/|$)']
 explain = "Matching x.com"
 
-[content.'^https?://x\.com(?:/|$)'.param]
-".*" = "Remove all tracing param"
+[content.'^https?://x\.com(?:/|$)'.queries]
+".*" = "Remove all tracing query"
 
 [content.'^https?://twitter\.com(?:/|$)']
 explain = "Matching twitter.com"
 
-[content.'^https?://twitter\.com(?:/|$)'.param]
-".*" = "All tracing param"
+[content.'^https?://twitter\.com(?:/|$)'.queries]
+".*" = "All tracing query"

@@ -22,7 +22,7 @@ impl RuleMeta {
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct RuleContent {
     pub explain: Option<String>,
-    pub param: HashMap<String, Option<String>>,
+    pub queries: HashMap<String, Option<String>>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]

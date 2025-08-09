@@ -104,9 +104,9 @@ impl PrunedUrl {
         }
     }
 
-    pub fn append(self, param: String, data: String) -> Self {
+    pub fn append(self, query: String, data: String) -> Self {
         Self {
-            removed: self.removed.update(param, data),
+            removed: self.removed.update(query, data),
             ..self
         }
     }

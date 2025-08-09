@@ -69,18 +69,18 @@ async fn create() -> anyhow::Result<()> {
 async fn new_rule() -> anyhow::Result<RuleMeta> {
     let reg = Text::new("What's your matching regex?").prompt()?;
     let content = RuleContent {
-        explain: Text::new("Any description of your param rule?").prompt_skippable()?,
-        param: {
+        explain: Text::new("Any description of your query rule?").prompt_skippable()?,
+        queries: {
             let mut map = HashMap::default();
 
             loop {
-                let param = Text::new("What's param do you want to remove?").prompt()?;
-                let desc = Text::new(&format!("Any description for param `{param}`?"))
+                let query = Text::new("What's query do you want to remove?").prompt()?;
+                let desc = Text::new(&format!("Any description for query `{query}`?"))
                     .prompt_skippable()?;
 
-                map.insert(param, desc);
+                map.insert(query, desc);
 
-                if !Confirm::new("Do you have more param want to add?")
+                if !Confirm::new("Do you have more query want to add?")
                     .with_default(true)
                     .prompt()?
                 {

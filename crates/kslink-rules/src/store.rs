@@ -10,7 +10,7 @@ use crate::{meta::RuleMeta, PrunedUrl, RuleStore, WrappedRegex};
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
 pub struct SimpleRuleStore {
     explain: Option<String>,
-    param: HashMap<WrappedRegex, Option<String>>,
+    queries: HashMap<WrappedRegex, Option<String>>,
 }
 
 impl SimpleRuleStore {
@@ -27,8 +27,8 @@ impl SimpleRuleStore {
             .filter(|(reg, _)| reg.is_ok())
             .map(|(reg, content)| (reg.unwrap(), content))
             .map(|(reg, content)| {
-                let param = content
-                    .param
+                let queries = content
+                    .queries
                     .iter()
                     .map(|(reg, explain)| {
                         (
@@ -41,7 +41,7 @@ impl SimpleRuleStore {
                     .map(|(rex, explain)| (rex.unwrap(), explain))
                     .collect::<HashMap<_, _>>();
                 let explain = content.explain.clone();
-                (reg, Self { explain, param })
+                (reg, Self { explain, queries })
             })
             .collect::<HashMap<WrappedRegex, SimpleRuleStore>>()
     }
@@ -54,7 +54,7 @@ impl RuleStore for SimpleRuleStore {
             .query_pairs()
             .filter_map(|(k, _)| {
                 let key = k.to_string();
-                if self.param.keys().par_bridge().any(|re| re.is_match(&key)) {
+                if self.queries.keys().par_bridge().any(|re| re.is_match(&key)) {
                     Some(key)
                 } else {
                     None
@@ -72,7 +72,7 @@ impl RuleStore for SimpleRuleStore {
 
         banned
             .iter()
-            .map(|param| (url.query_pairs().find(|(e, _)| e == param).unwrap().clone()))
+            .map(|query| (url.query_pairs().find(|(e, _)| e == query).unwrap().clone()))
             .fold(PrunedUrl::new(new_url.clone()), |acc, (k, v)| {
                 acc.append(k.clone().to_string(), v.clone().to_string())
             })

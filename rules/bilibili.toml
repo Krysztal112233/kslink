@@ -1,16 +1,16 @@
 type = "trim"
 
 [tests]
-"https://live.bilibili.com/?spm_id_from=333.1007.0.0" = "https://live.bilibili.com/?"
+"https://live.bilibili.com/?spm_id_from=xxxxxxxxxxxx" = "https://live.bilibili.com/?"
 
 [content.'^https?://live\.bilibili\.com(?:/|$)']
 explain = "Matching the live site of bilibili"
 
-[content.'^https?://live\.bilibili\.com(?:/|$)'.param]
-".*" = "Remove all tracing param"
+[content.'^https?://live\.bilibili\.com(?:/|$)'.queries]
+".*" = "Remove all tracing query"
 
 [content.'^https?://(?:www\.)?bilibili\.com(?:/|$)']
 explain = "Matching the main site of bilibili"
 
-[content.'^https?://(?:www\.)?bilibili\.com(?:/|$)'.param]
-".*" = "Remove all tracing param"
+[content.'^https?://(?:www\.)?bilibili\.com(?:/|$)'.queries]
+".*" = "Remove all tracing query"
