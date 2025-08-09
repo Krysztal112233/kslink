@@ -97,7 +97,7 @@ pub fn UrlInputBox() -> Element {
             }
 
             if let Some(url) = short_url() {
-                div { class: "alert alert-outline alert-info mt-4", "role" : "alert",
+                div { class: "alert alert-success mt-4", "role" : "alert",
                     svg {
                         xmlns: "http://www.w3.org/2000/svg",
                         class: "stroke-current shrink-0 h-6 w-6",
@@ -121,7 +121,7 @@ pub fn UrlInputBox() -> Element {
                     }
                 }
 
-                div { class: "alert alert-outline alert-info mt-4", "role" : "alert",
+                div { class: "alert alert-success mt-4", "role" : "alert",
                     svg {
                         class: "size-6",
                         fill: "none",

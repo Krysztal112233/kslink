@@ -1154,10 +1154,10 @@
   .rounded-xl {
     border-radius: var(--radius-xl);
   }
-  .alert-info {
-    border-color: var(--color-info);
-    color: var(--color-info-content);
-    --alert-color: var(--color-info);
+  .alert-success {
+    border-color: var(--color-success);
+    color: var(--color-success-content);
+    --alert-color: var(--color-success);
   }
   .bg-base-200 {
     background-color: var(--color-base-200);
